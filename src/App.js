@@ -5,11 +5,14 @@ import SignIn from './pages/SignIn';
 
 const App = () => {
   return (
-    <Routes>
+    <>
       <GlobalStyle />
-      <Route path="/" element={<Landing />} />
-      <Route path="/signin" element={<SignIn />} />
-    </Routes>
+      <Routes>
+        <Route path="/" element={<Landing />} />
+        <Route path="/signin" element={<SignIn />} />
+      </Routes>
+    </>
+
   );
 }
 
