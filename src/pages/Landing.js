@@ -1,10 +1,15 @@
 import React from 'react'
+import Header from '../components/Header'
+import Footer from '../components/Footer'
 
 const Landing = () => {
   return (
-    <div>LandingPage
-          <h1>Landing</h1>
-    </div>
+    <>
+      <Header />
+      LandingPage
+      <h1>Landing</h1>
+      <Footer />
+    </>
   )
 }
 
