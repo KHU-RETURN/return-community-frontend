@@ -14,7 +14,7 @@ const Header = () => {
   return (
     <Wrapper>
       <Link to="/">
-          <h2>Return</h2>
+        <ReturnLogo>Return</ReturnLogo>
       </Link>
       <NavBar>
           <Link
@@ -73,6 +73,7 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction : row;
   text-align: center;
+  align-items: center;
   justify-content: space-between;
   a{
     text-decoration: none;
@@ -82,7 +83,13 @@ const Wrapper = styled.div`
     color: #313338;
     padding: 1rem;
   }
+`;
 
+const ReturnLogo = styled.div`
+  padding: 0 33px;
+  font-family: Pretendard;
+  font-size: 24px;
+  font-weight: 800;
 `;
 
 const NavBar = styled.div`

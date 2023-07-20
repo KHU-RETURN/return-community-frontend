@@ -10,7 +10,7 @@ const Footer = () => {
   return (
     <>
       <Wrapper>
-        <h2>Return</h2>
+        <ReturnLogo>Return</ReturnLogo>
         <NavBar>
           <NavElement className="start">개인정보처리방침</NavElement>
           <NavElement>이용약관</NavElement>
@@ -31,6 +31,13 @@ const Wrapper = styled.div`
   bottom: 0;
   align-items: center;
   justify-content: space-between;
+`;
+
+const ReturnLogo = styled.div`
+  padding: 0 66px;
+  font-family: Pretendard;
+  font-size: 24px;
+  font-weight: 800;
 `;
 
 const NavBar = styled.nav`
