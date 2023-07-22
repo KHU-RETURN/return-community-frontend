@@ -10,16 +10,17 @@ const Diary = () => {
   const currentURL = useLocation().search;
   const diaryList = [...DiaryList]
   const [currentPage, setcurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
 
-  useEffect(() => {
-    const extractPageNumFromURL = () => {
+  useEffect( () => {
+    const extractPageNumFromURL = async () => {
       const urlParams = new URLSearchParams(currentURL);
       const pageParam = urlParams.get('page');
       pageParam && setcurrentPage(isNaN(parseInt(pageParam, 10)) ? 1 : parseInt(pageParam, 10));
+      getDiaryList(parseInt(pageParam, 10), pageSize);
     }
     extractPageNumFromURL();
-    getDiaryList(1, 1);
-  }, [currentURL]);
+  }, [currentURL, pageSize]);
   
   return (
     <>
