@@ -11,13 +11,14 @@ const PaginationBar = ({currentPage, totalPages, setPage}) => {
     const links = [];
     for (let pageNum = 1; pageNum <= totalPages; pageNum++) {
       links.push(
-        <Link to={`/diary/?page=${pageNum}`} key={pageNum} className={currentPage === pageNum && "current"}>
+        <Link to={`/diary/?page=${pageNum}`} key={pageNum} className={currentPage === pageNum ? "current" : "non-current"}>
           {pageNum}
         </Link>
       );
     }
     return links;
   }
+
   return (
     <>
       <Container>

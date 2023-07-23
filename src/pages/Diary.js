@@ -12,7 +12,7 @@ const Diary = () => {
   const [currentPage, setcurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(3);
   const [numberOfPages, setNumberOfPages] = useState()
-  
+
   useEffect(() => {
     const extractPageNumFromURL = () => {
       const urlParams = new URLSearchParams(currentURL);
@@ -31,6 +31,15 @@ const Diary = () => {
             <WriteIcon fill="white" width="40px" />
           </WritePostButton>
         <DiaryListContainer>
+          <PageSizeRegulator>
+            페이지 당 게시물 개수
+            <RegulatorButton type="radio" id="1" name="pageSize" value="1" classname={pageSize === 1 ? "selected" : "non-selected"} onChange={()=>setPageSize(1)}/>
+            <label for="1">1</label>
+            <RegulatorButton type="radio" id="5" name="pageSize" value="5" classname={pageSize === 5 ? "selected" : "non-selected"} onChange={()=>setPageSize(5)}/>
+            <label for="5">5</label>
+            <RegulatorButton type="radio" id="10" name="pageSize" value="10" classname={pageSize === 10 ? "selected" : "non-selected"} onChange={()=>setPageSize(10)}/>
+            <label for="10">10</label>
+          </PageSizeRegulator>
           {diaryList.map((post) => (
             <DiaryBlock>
               <Title>{post.title}</Title>
@@ -71,6 +80,10 @@ const DiaryListContainer = styled.div`
   width: 100vw;
   text-align: center;
 `;
+
+const PageSizeRegulator = styled.div``;
+
+const RegulatorButton = styled.input``;
 
 const DiaryBlock = styled.div`
   width: 300px;
