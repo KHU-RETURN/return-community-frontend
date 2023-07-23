@@ -5,6 +5,7 @@ import { DiaryList } from '../store/fakeDiary'
 import PaginationBar from '../components/diary/PaginationBar'
 import { useLocation } from 'react-router-dom'
 import { getDiaryList } from '../utils/axios'
+import WritePostModal from '../components/diary/WritePostModal'
 
 /**
  * To do
@@ -18,6 +19,13 @@ const Diary = () => {
   const [currentPage, setcurrentPage] = useState(1)
   const [pageSize, setPageSize] = useState(3)
   const [numberOfPages, setNumberOfPages] = useState()
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [fileName, setFileName] = useState("게시물에 추가");
+
+  const handleModalOpen = () => {
+    document.body.style.overflow = "hidden";
+    setIsModalOpen(true);
+  };
 
   useEffect(() => {
     const extractPageNumFromURL = () => {
@@ -33,7 +41,7 @@ const Diary = () => {
   return (
     <>
         <StyledComponent>diary</StyledComponent>
-        <WritePostButton>
+        <WritePostButton onClick={handleModalOpen} >
             <WriteIcon fill="white" width="40px" />
           </WritePostButton>
         <DiaryListContainer>
@@ -55,6 +63,14 @@ const Diary = () => {
           ))}
         </DiaryListContainer>
         <PaginationBar currentPage={currentPage} totalPages={numberOfPages} setPage={setcurrentPage}/>
+        {isModalOpen && (
+          <WritePostModal
+            setIsModalOpen={setIsModalOpen}
+            name="김수한무거북이"
+            fileName={fileName}
+            setFileName={setFileName}
+          />
+        )}
     </>
   )
 }
