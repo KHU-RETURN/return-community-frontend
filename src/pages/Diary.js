@@ -1,28 +1,34 @@
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
-import { ReactComponent as WriteIcon } from "../assets/pen.svg";
+import { ReactComponent as WriteIcon } from "../assets/pen.svg"
 import { DiaryList } from '../store/fakeDiary'
 import PaginationBar from '../components/diary/PaginationBar'
-import { useLocation } from 'react-router-dom';
-import { getDiaryList } from '../utils/axios';
+import { useLocation } from 'react-router-dom'
+import { getDiaryList } from '../utils/axios'
+
+/**
+ * To do
+ * 1. PageSizeRegulator, DiaryBlock 컴포넌트 분리, 추상화 요망
+ * 2. 게시물 작성 UI(Modal) 제작, Post /diary     
+ */
 
 const Diary = () => {
-  const currentURL = useLocation().search;
+  const currentURL = useLocation().search
   const diaryList = [...DiaryList]
-  const [currentPage, setcurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(3);
+  const [currentPage, setcurrentPage] = useState(1)
+  const [pageSize, setPageSize] = useState(3)
   const [numberOfPages, setNumberOfPages] = useState()
 
   useEffect(() => {
     const extractPageNumFromURL = () => {
-      const urlParams = new URLSearchParams(currentURL);
-      const pageParam = urlParams.get('page');
-      pageParam && setcurrentPage(isNaN(parseInt(pageParam, 10)) ? 1 : parseInt(pageParam, 10));
-      getDiaryList(parseInt(pageParam, 10), pageSize);
-      setNumberOfPages((diaryList.length / pageSize) + 1)
+      const urlParams = new URLSearchParams(currentURL)
+      const pageParam = urlParams.get('page')
+      pageParam && setcurrentPage(isNaN(parseInt(pageParam, 10)) ? 1 : parseInt(pageParam, 10))
+      return parseInt(pageParam,10);
     }
-    extractPageNumFromURL();
-  }, [currentURL, pageSize, diaryList.length]);
+    getDiaryList(extractPageNumFromURL(), pageSize)
+    setNumberOfPages((diaryList.length / pageSize) + 1)
+  }, [currentURL, pageSize, diaryList.length])
   
   return (
     <>
@@ -40,6 +46,7 @@ const Diary = () => {
             <RegulatorButton type="radio" id="10" name="pageSize" value="10" classname={pageSize === 10 ? "selected" : "non-selected"} onChange={()=>setPageSize(10)}/>
             <label for="10">10</label>
           </PageSizeRegulator>
+          {/** To do: 현재 서버의 일기장 리스트가 비어있는 관계로 /store/fakeDiary.js 의 가짜 데이터를 사용중, 추후 서버에 일기장 데이터 추가 시 변경 요망 */}
           {diaryList.map((post) => (
             <DiaryBlock>
               <Title>{post.title}</Title>
