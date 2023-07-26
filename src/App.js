@@ -2,6 +2,7 @@ import { Route, Routes } from "react-router";
 import GlobalStyle from "./styles/globalStyle";
 import Landing from "./pages/Landing";
 import SignIn from "./pages/SignIn";
+import SignUp from "./pages/SignUp";
 import GoogleRedirect from "./components/GoogleRedirect";
 
 const App = () => {
@@ -20,6 +21,10 @@ const App = () => {
         <Route
           path="/code"
           element={<GoogleRedirect />}
+        />
+        <Route
+          path="/signup"
+          element={<SignUp />}
         />
       </Routes>
     </>

@@ -10,7 +10,7 @@ const SignIn = () => {
       <Link
         to={`https://accounts.google.com/o/oauth2/v2/auth?scope=openid https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile&access_type=offline&include_granted_scope=true&response_type=code&state=state_parameter_passthrough_value&redirect_uri=http://localhost:8080/code&client_id=${CLIENT_ID}`}
       >
-        Google로그인
+        Google 로그인
       </Link>
     </div>
   );
