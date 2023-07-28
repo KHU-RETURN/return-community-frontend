@@ -17,7 +17,10 @@ const SignUp = () => {
   const [isDupEmail, setIsDupEmail] = useState(true);
   const [isDupPhone, setIsDupPhone] = useState(true);
   const [isDupName, setIsDupName] = useState(true);
-  const [profileImg, setProfileImg] = useState("");
+  const [profileImg, setProfileImg] = useState(default_profile);
+  // previewImg : 서버로 보내는 이미지가 아닌, 내 정보에서 미리 보는 프로필 사진
+  // 서버로 보내는 파일이랑 형식이 달라서 따로 지정함
+  const [previewImg, setPreviewImg] = useState(default_profile);
   const imgRef = useRef();
 
   const handleEmailChange = (e) => {
@@ -84,19 +87,41 @@ const SignUp = () => {
 
   const handleProfileChange = () => {
     const imgFile = imgRef.current.files[0];
+    setProfileImg(imgFile);
+
     const reader = new FileReader();
     reader.readAsDataURL(imgFile);
     reader.onloadend = () => {
-      setProfileImg(reader.result);
+      setPreviewImg(reader.result);
     };
   };
 
   const deleteProfile = () => {
-    setProfileImg("");
+    setPreviewImg(default_profile);
   };
 
-  const handleSignUp = () => {
-    console.log("회원가입 api 연결");
+  const handleSignUp = async () => {
+    const phoneNumWithoutHyphen = phoneNum.replace(/-/g, "");
+    const formData = new FormData();
+
+    const userData = {
+      googleSub: `${googleSub}`,
+      phoneNumber: `${phoneNumWithoutHyphen}`,
+      email: `${email}`,
+      name: `${fullname}`,
+      nickname: `${nickname}`,
+      studentId: `${stuId}`,
+    };
+
+    formData.append("signUpRequest", JSON.stringify(userData));
+    formData.append("profileImg", profileImg);
+
+    try {
+      const response = await axios.post(process.env.REACT_APP_API + "/sign-up", formData);
+      console.log(response.data);
+    } catch (error) {
+      console.error("Error making POST request:", error);
+    }
   };
 
   return (
@@ -151,7 +176,7 @@ const SignUp = () => {
       </div>
       <div>
         <ProfileImg
-          src={profileImg ? profileImg : `${default_profile}`}
+          src={previewImg}
           alt="프로필 이미지"
         />
         <ProfileImglabel htmlFor="profileImg">프로필 이미지 추가</ProfileImglabel>
