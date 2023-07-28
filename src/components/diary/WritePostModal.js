@@ -1,17 +1,13 @@
-import React from "react";
+import React, { useRef } from "react";
 import styled from "styled-components";
 import { ReactComponent as CloseIcon } from "../../assets/close_gray.svg";
-import { ReactComponent as ImagesIcon } from "../../assets/images.svg";
+import PostEditor from './PostEditor';
 
-const WritePostModal = ({ setIsModalOpen, name, fileName, setFileName }) => {
-  const placeholder = `${name}님, 오늘은 어떤 이야기를 나눠볼까요?`;
+const WritePostModal = ({ setIsModalOpen, name}) => {
+  const ref = useRef(null);
   const handleModalClose = () => {
     document.body.style.overflow = "unset";
     setIsModalOpen(false);
-  };
-  const handleFileChange = (e) => {
-    const newFile = e.target.files[0];
-    newFile ? setFileName(newFile.name) : setFileName("");
   };
   return (
     <>
@@ -26,14 +22,7 @@ const WritePostModal = ({ setIsModalOpen, name, fileName, setFileName }) => {
             <Name>{name}</Name>
           </ModalHeader>
           <ModalInner>
-            <AddImageBar>
-              <FileName>{fileName}</FileName>
-              <AddImageIcon>
-                <ImageInput type="file" onChange={handleFileChange}/>
-                <ImagesIcon />
-              </AddImageIcon>
-            </AddImageBar>
-            <PostContent placeholder={placeholder} />
+            <PostEditor editorRef={ref}/>
           </ModalInner>
           <ModalFooter>
             <SubmitButton>게시물 올리기</SubmitButton>
@@ -63,7 +52,7 @@ const ModalBackground = styled.div`
   transition: .5s;
 `;
 
-const ModalOutlay = styled.div`
+const ModalOutlay = styled.form`
   position: relative;
   top: 0;
   left: 0;
@@ -73,7 +62,7 @@ const ModalOutlay = styled.div`
   flex-direction: column;
   margin: auto;
   width: 764px;
-  height: 627px;
+  height: 80vh;
   background: #ffffff;
   border: 1px solid #fafafa;
   box-sizing: border-box;
@@ -115,54 +104,6 @@ const Name = styled.div`
 
 const ModalInner = styled.div`
   margin: 18px 45px 0px 45px;
-`;
-
-const AddImageBar = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  padding: 8px 18px;
-  width: 638px;
-  height: 36px;
-  background: #f5f3ff;
-  border-radius: 10px;
-`;
-
-const ImageInput = styled.input`
-  display: none;
-`;
-
-const AddImageIcon = styled.label`
-  cursor: pointer;
-  padding-top: 4px;
-`;
-
-const FileName = styled.div`
-  font-family: Pretendard;
-  font-style: normal;
-  font-weight: normal;
-  font-size: 16px;
-  line-height: 16px;
-  color: #7054ff;
-`;
-
-const PostContent = styled.textarea`
-  width: 634px;
-  height: 308px;
-  margin: 40px 20px 0px 20px;
-  font-family: Pretendard;
-  font-style: normal;
-  font-weight: normal;
-  font-size: 18px;
-  line-height: 18px;
-  color: #313338;
-  border: none;
-  resize: none;
-  outline: none;
-  ::placeholder {
-    color: #d2d2d2;
-  }
 `;
 
 const ModalFooter = styled.div`
