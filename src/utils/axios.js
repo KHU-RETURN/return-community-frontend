@@ -25,3 +25,22 @@ export const getDiaryList = (cursor, size) => {
   
 }
 
+export const uploadPost = (data) => {
+let config = {
+  method: 'post',
+  maxBodyLength: Infinity,
+  url: 'https://khu-return.site/diary',
+  headers: { 
+    'Content-Type': 'multipart/form-data'
+  },
+  data : data
+};
+
+axios.request(config)
+.then((response) => {
+  console.log(JSON.stringify(response.data));
+})
+.catch((error) => {
+  console.log(error);
+});
+}

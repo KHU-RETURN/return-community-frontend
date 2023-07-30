@@ -1,14 +1,43 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import styled from "styled-components";
 import { ReactComponent as CloseIcon } from "../../assets/close_gray.svg";
 import PostEditor from './PostEditor';
+import { uploadPost } from '../../utils/axios';
+
+const POST_IS_EMPTY = "<p><br></p>"
 
 const WritePostModal = ({ setIsModalOpen, name}) => {
   const ref = useRef(null);
+  const [title, setTitle] = useState("")
+
   const handleModalClose = () => {
     document.body.style.overflow = "unset";
     setIsModalOpen(false);
   };
+  const handleSubmit = async () => {
+    try{
+      const editorlns = ref?.current?.getInstance();
+      const content = editorlns.getHTML();
+      const postData = `{
+        "title" : ${title},
+        "content" : ${content},
+        "isAnonymous" : false,
+        "eventDate" : "2023-07-30 19:36:23",
+        "thumbnailIndex": ${0}, 
+      }`
+    if (content === POST_IS_EMPTY) {
+      alert('내용을 입력해주세요');
+      return
+    }
+    await uploadPost(postData);
+  } catch (e) {
+    console.log(e);
+    alert('다시 시도해주세요');
+    return
+  }
+  setIsModalOpen(false);
+  }
+
   return (
     <>
       <ModalBackground>
@@ -22,10 +51,12 @@ const WritePostModal = ({ setIsModalOpen, name}) => {
             <Name>{name}</Name>
           </ModalHeader>
           <ModalInner>
+            글 제목
+            <PostTitle value={title} placeholder="제목을 입력해주세요" onChange={(e) => {setTitle(e.currentTarget.value)}}></PostTitle>
             <PostEditor editorRef={ref}/>
           </ModalInner>
           <ModalFooter>
-            <SubmitButton>게시물 올리기</SubmitButton>
+            <SubmitButton onClick={() => handleSubmit()}>게시물 올리기</SubmitButton>
           </ModalFooter>
         </ModalOutlay>
       </ModalBackground>
@@ -52,7 +83,7 @@ const ModalBackground = styled.div`
   transition: .5s;
 `;
 
-const ModalOutlay = styled.form`
+const ModalOutlay = styled.div`
   position: relative;
   top: 0;
   left: 0;
@@ -106,6 +137,16 @@ const ModalInner = styled.div`
   margin: 18px 45px 0px 45px;
 `;
 
+const PostTitle = styled.input`
+  width: 670px;
+  outline: none;
+  border: none;
+  background: #fafafa;
+  font-size: 20px;
+  padding: 10px;
+  border-radius: 10px;
+`;
+
 const ModalFooter = styled.div`
   display: flex;
   justify-content: center;
@@ -113,7 +154,7 @@ const ModalFooter = styled.div`
   margin: 56px 0px 45px 0px;
 `;
 
-const SubmitButton = styled.div`
+const SubmitButton = styled.button`
   display: flex;
   flex-direction: row;
   align-items: center;
