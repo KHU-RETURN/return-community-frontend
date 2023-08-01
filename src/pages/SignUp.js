@@ -1,7 +1,7 @@
 import axios from "axios";
 import React, { useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import styled, { createGlobalStyle } from "styled-components";
+import styled from "styled-components";
 import { useState, useRef } from "react";
 import default_profile from "../assets/return_logo.png";
 
@@ -35,6 +35,7 @@ const SignUp = () => {
     setEmail(e.target.value);
   };
 
+  // 이메일 중복 확인 버튼을 눌렀을 때 동작
   const isDuplicatedEmail = () => {
     axios
       .get(process.env.REACT_APP_API + `/validate-email/${email}`)
@@ -49,13 +50,14 @@ const SignUp = () => {
       });
   };
 
+  // 전화번호 input 태그에 입력 이벤트가 발생했을 때 동작
   const handlePhoneNumChange = (e) => {
     const inputPhoneNum = e.target.value;
     const formattedPhoneNum = formatPhoneNum(inputPhoneNum);
     setPhoneNum(formattedPhoneNum);
   };
 
-  //휴대전화 번호 입력에서 자동으로 하이푼이 들어가게끔 동작
+  //휴대전화 input에 자동으로 하이푼이 들어가게끔 동작
   const formatPhoneNum = (num) => {
     const cleaned = num
       .replace(/[^0-9]/g, "")
@@ -64,6 +66,7 @@ const SignUp = () => {
     return cleaned;
   };
 
+  // 전화번호 중복 확인 버튼을 눌렀을 때 동작
   const isDuplicatedPhoneNum = () => {
     const phoneNumWithoutHyphen = phoneNum.replace(/-/g, "");
     axios
@@ -85,6 +88,7 @@ const SignUp = () => {
     setNickname(e.target.value);
   };
 
+  // 닉네임 중복 확인 버튼을 눌렀을 때 동작
   const isDuplicatedNickname = () => {
     axios
       .get(process.env.REACT_APP_API + `/validate-nickname/${nickname}`)
@@ -97,6 +101,7 @@ const SignUp = () => {
       });
   };
 
+  // 프로필 이미지 추가 버튼을 눌렀을 때 동작
   const handleProfileChange = () => {
     const imgFile = imgRef.current.files[0];
     setProfileImg(imgFile);
@@ -108,11 +113,13 @@ const SignUp = () => {
     };
   };
 
+  //프로필 삭제 버튼 눌렀을 때 동작
   const deleteProfile = () => {
     setPreviewImg(default_profile); // 기본 이미지(리턴 로고)로 설정
     setProfileImg(""); // 서버로 보내는 사진은 null
   };
 
+  //회원가입 버튼 눌렀을 때 동작
   const handleSignUp = async () => {
     if (
       isEmailAvailable === true &&
@@ -148,13 +155,12 @@ const SignUp = () => {
   };
 
   return (
-    <>
-      <GlobalStyle />
+    <Container>
       {fullname}
       {googleSub}
-      <div>
+      <EmailContainer>
         이메일 :
-        <input
+        <EmailInput
           ref={emailRef}
           type="email"
           value={email}
@@ -164,7 +170,7 @@ const SignUp = () => {
         <button onClick={isDuplicatedEmail}>중복 확인</button>
         {isEmailAvailable === true && <p>사용 가능한 이메일입니다!</p>}
         {isEmailAvailable === false && <p>이미 가입 되었거나 경희대 메일 양식이 아닙니다! </p>}
-      </div>
+      </EmailContainer>
       <div>
         전화번호 :
         <input
@@ -204,12 +210,12 @@ const SignUp = () => {
         />
       </div>
       <div>
-        <ProfileImg
+        <ProfileImgView
           src={previewImg}
           alt="프로필 이미지"
         />
-        <ProfileImglabel htmlFor="profileImg">프로필 이미지 추가</ProfileImglabel>
-        <ProfileInput
+        <ProfileImgAdd htmlFor="profileImg">프로필 이미지 추가</ProfileImgAdd>
+        <HiddenInput
           style={{ display: "none" }}
           type="file"
           accept="image/*"
@@ -217,25 +223,39 @@ const SignUp = () => {
           onChange={handleProfileChange}
           ref={imgRef}
         />
-        <button onClick={deleteProfile}>프로필 삭제</button>
+        <ProfileDelete onClick={deleteProfile}>프로필 삭제</ProfileDelete>
       </div>
 
       <button onClick={handleSignUp}>회원 가입</button>
       {isSignUpAvailable === false && <div>모든 중복 확인을 해주십시오.</div>}
-    </>
+    </Container>
   );
 };
 
 export default SignUp;
 
-const GlobalStyle = createGlobalStyle`
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
+const Container = styled.div`
+  border: 1px solid blue;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 `;
 
+const EmailContainer = styled.div`
+  margin: 0 auto;
+  padding: 20px;
+`;
+
+const EmailInput = styled.input`
+  width: 200px;
+  height: 32px;
+  font-size: 15px;
+  border: 0;
+  border-radius: 15px;
+  outline: none;
+  padding-left: 10px;
+  background-color: rgb(233, 233, 233);
+`;
 /*
 const Email = styled.div``;
 
@@ -253,13 +273,13 @@ const PhoneNum = styled.div``;
 const PhoneNumberInput = styled.input``;
 */
 
-const ProfileImg = styled.img`
-  border-radius: 100px;
-  width: 200px;
-  height: 200px;
+const ProfileImgView = styled.img`
+  border-radius: 50%;
+  width: 240px;
+  height: 240px;
 `;
 
-const ProfileImglabel = styled.label`
+const ProfileImgAdd = styled.label`
   margin: 5px 0 20px 0;
   font-weight: bold;
   font-size: 13px;
@@ -267,6 +287,14 @@ const ProfileImglabel = styled.label`
   cursor: pointer;
 `;
 
-const ProfileInput = styled.input`
+const HiddenInput = styled.input`
   display: none;
+`;
+
+const ProfileDelete = styled.label`
+  margin: 5px 0 20px 0;
+  font-weight: bold;
+  font-size: 13px;
+  display: inline-block;
+  cursor: pointer;
 `;
