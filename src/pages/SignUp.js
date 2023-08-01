@@ -156,59 +156,71 @@ const SignUp = () => {
 
   return (
     <Container>
-      {fullname}
-      {googleSub}
-      <EmailContainer>
-        이메일 :
-        <EmailInput
-          ref={emailRef}
-          type="email"
-          value={email}
-          onChange={handleEmailChange}
-          placeholder="***.khu.ac.kr"
-        />
-        <button onClick={isDuplicatedEmail}>중복 확인</button>
-        {isEmailAvailable === true && <p>사용 가능한 이메일입니다!</p>}
-        {isEmailAvailable === false && <p>이미 가입 되었거나 경희대 메일 양식이 아닙니다! </p>}
-      </EmailContainer>
-      <div>
-        전화번호 :
-        <input
-          ref={phoneNumRef}
-          type="text"
-          value={phoneNum}
-          onChange={handlePhoneNumChange}
-          maxLength={13}
-          placeholder="휴대폰 번호를 입력해주세요"
-        />
-        <button onClick={isDuplicatedPhoneNum}>중복 확인</button>
-        {isPhoneNumAvailable === true && <p>사용 가능한 번호입니다!</p>}
-        {isPhoneNumAvailable === false && <p>이미 가입 되었거나 휴대폰 번호 양식이 아닙니다!</p>}
-      </div>
-      <div>
-        닉네임 :
-        <input
-          ref={nicknameRef}
-          type="text"
-          value={nickname}
-          onChange={handleNicknameChange}
-          maxLength={8}
-          placeholder="커뮤니티에서 사용할 닉네임을 입력해주세요"
-        />
-        <button onClick={isDuplicatedNickname}>중복 확인</button>
-        {isNicknameAvailable === true && <p>사용 가능한 닉네임입니다!</p>}
-        {isNicknameAvailable === false && <p>이미 사용 중인 닉네임입니다!</p>}
-      </div>
-      <div>
-        학번 :
-        <input
-          type="text"
-          value={stuId}
-          onChange={handleStuIdChange}
-          maxLength={10}
-          placeholder="학번을 입력해주세요"
-        />
-      </div>
+      <FormContainer>
+        <DivLine>
+          <InputForm
+            ref={emailRef}
+            type="email"
+            value={email}
+            onChange={handleEmailChange}
+            placeholder="KHU Email"
+          />
+          <DupBtn onClick={isDuplicatedEmail}>중복 확인</DupBtn>
+        </DivLine>
+
+        {isEmailAvailable === true && <div>사용 가능한 이메일입니다!</div>}
+        {isEmailAvailable === false && <div>이미 가입 되었거나 경희대 메일 양식이 아닙니다! </div>}
+
+        <Horizaontal></Horizaontal>
+
+        <DivLine>
+          <InputForm
+            ref={phoneNumRef}
+            type="text"
+            value={phoneNum}
+            onChange={handlePhoneNumChange}
+            maxLength={13}
+            placeholder="Phone Number"
+          />
+          <DupBtn onClick={isDuplicatedPhoneNum}>중복 확인</DupBtn>
+        </DivLine>
+        {isPhoneNumAvailable === true && <div>사용 가능한 번호입니다!</div>}
+        {isPhoneNumAvailable === false && (
+          <div>이미 가입 되었거나 휴대폰 번호 양식이 아닙니다!</div>
+        )}
+
+        <DivLine>
+          <InputForm
+            ref={nicknameRef}
+            type="text"
+            value={nickname}
+            onChange={handleNicknameChange}
+            maxLength={8}
+            placeholder="Nickname"
+          />
+          <DupBtn onClick={isDuplicatedNickname}>중복 확인</DupBtn>
+        </DivLine>
+        {isNicknameAvailable === true && <div>사용 가능한 닉네임입니다!</div>}
+        {isNicknameAvailable === false && <div>이미 사용 중인 닉네임입니다!</div>}
+
+        <DivLine>
+          <InputForm
+            type="text"
+            value={stuId}
+            onChange={handleStuIdChange}
+            maxLength={10}
+            placeholder="Student ID"
+          />
+        </DivLine>
+
+        <ProfileContiner>
+          <ProfileImgView
+            src={previewImg}
+            alt="프로필 이미지"
+          />
+        </ProfileContiner>
+      </FormContainer>
+
       <div>
         <ProfileImgView
           src={previewImg}
@@ -236,47 +248,57 @@ export default SignUp;
 
 const Container = styled.div`
   border: 1px solid blue;
+  padding: 10px;
   display: flex;
   flex-direction: column;
   justify-content: center;
+  align-items: center;
 `;
 
-const EmailContainer = styled.div`
-  margin: 0 auto;
-  padding: 20px;
+const InputForm = styled.input`
+  margin-left: 27%;
+  background-color: #eee;
+  font-size: 18px;
+  border: none;
+  border-radius: 7px;
+  padding: 12px 15px;
+  width: 35%;
+  height: 50px;
 `;
 
-const EmailInput = styled.input`
-  width: 200px;
-  height: 32px;
-  font-size: 15px;
-  border: 0;
-  border-radius: 15px;
+const DupBtn = styled.button`
+  margin-left: 10px;
+  margin-right: 27%;
+  width: 8%;
+  height: 40px;
+  color: #fff;
+  border-radius: 5px;
+  padding: 10px 25px;
+  cursor: pointer;
+  box-shadow: inset 2px 2px 2px 0px rgba(255, 255, 255, 0.5), 7px 7px 20px 0px rgba(0, 0, 0, 0.1),
+    4px 4px 5px 0px rgba(0, 0, 0, 0.1);
   outline: none;
-  padding-left: 10px;
-  background-color: rgb(233, 233, 233);
+  background: rgb(96, 9, 240);
+  background: linear-gradient(0deg, rgba(0, 140, 186, 1) 0%, rgba(10, 160, 240, 1) 100%);
+  border: none;
+
+  &:before {
+    height: 0%;
+    width: 2px;
+  }
+
+  &:hover {
+    box-shadow: 1px 1px 2px 0 rgba(255, 255, 255, 0.5), -1px -1px 2px 0 rgba(116, 125, 136, 0.5),
+      inset -1px -1px 2px 0 rgba(255, 255, 255, 0.2), inset 1px 1px 2px 0 rgba(0, 0, 0, 0.4);
+  }
 `;
-/*
-const Email = styled.div``;
 
-const EmailContainer = styled.div``;
-
-const EmailInput = styled.input``;
-
-const EmailSpan = styled.span``;
-
-const EmailLabel = styled.label``;
-
-const EmailBtn = styled.button``;
-
-const PhoneNum = styled.div``;
-const PhoneNumberInput = styled.input``;
-*/
-
+// 프로필 사진 부분
 const ProfileImgView = styled.img`
   border-radius: 50%;
   width: 240px;
   height: 240px;
+  border: 1px solid gray;
 `;
 
 const ProfileImgAdd = styled.label`
@@ -297,4 +319,40 @@ const ProfileDelete = styled.label`
   font-size: 13px;
   display: inline-block;
   cursor: pointer;
+`;
+
+const FormContainer = styled.div`
+  border: 1.5px solid blue;
+  margin-top: 100px;
+  width: 90vw;
+  height: auto;
+`;
+
+const DivLine = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 30px;
+`;
+
+const ProfileContiner = styled.div`
+  width: 100%;
+  height: 400px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid blue;
+`;
+
+const Horizaontal = styled.hr`
+  border: 0px solid;
+  height: 1px;
+  background-image: linear-gradient(
+    to right,
+    rgba(0, 0, 0, 0),
+    rgba(0, 140, 186, 0.5),
+    rgba(0, 0, 0, 0)
+  );
+  margin-top: 50px;
 `;
