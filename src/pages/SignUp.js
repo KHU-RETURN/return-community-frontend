@@ -27,7 +27,6 @@ const SignUp = () => {
   const emailRef = useRef(); // email input 태그에 focus를 하기 위함
   const phoneNumRef = useRef();
   const nicknameRef = useRef();
-  const stuIdRef = useRef();
 
   const [isSignUpAvailable, setIsSignUpAvailable] = useState(null);
 
@@ -125,7 +124,7 @@ const SignUp = () => {
       isEmailAvailable === true &&
       isPhoneNumAvailable === true &&
       isNicknameAvailable === true &&
-      stuId.length < 10
+      stuId.length === 10
     ) {
       setIsSignUpAvailable(true);
       const phoneNumWithoutHyphen = phoneNum.replace(/-/g, "");
@@ -168,10 +167,14 @@ const SignUp = () => {
           <DupBtn onClick={isDuplicatedEmail}>중복 확인</DupBtn>
         </DivLine>
 
-        {isEmailAvailable === true && <div>사용 가능한 이메일입니다!</div>}
-        {isEmailAvailable === false && <div>이미 가입 되었거나 경희대 메일 양식이 아닙니다! </div>}
-
-        <Horizaontal></Horizaontal>
+        <CheckMsg
+          isVisible={isEmailAvailable !== null}
+          isAvailable={isEmailAvailable}
+        >
+          {isEmailAvailable
+            ? "사용 가능한 이메일입니다."
+            : "이미 사용 중이거나 경희대 웹메일 양식이 아닙니다."}
+        </CheckMsg>
 
         <DivLine>
           <InputForm
@@ -184,10 +187,15 @@ const SignUp = () => {
           />
           <DupBtn onClick={isDuplicatedPhoneNum}>중복 확인</DupBtn>
         </DivLine>
-        {isPhoneNumAvailable === true && <div>사용 가능한 번호입니다!</div>}
-        {isPhoneNumAvailable === false && (
-          <div>이미 가입 되었거나 휴대폰 번호 양식이 아닙니다!</div>
-        )}
+
+        <CheckMsg
+          isVisible={isPhoneNumAvailable !== null}
+          isAvailable={isPhoneNumAvailable}
+        >
+          {isPhoneNumAvailable
+            ? "사용 가능한 번호입니다."
+            : "이미 가입 되었거나 휴대폰 번호 양식이 아닙니다."}
+        </CheckMsg>
 
         <DivLine>
           <InputForm
@@ -200,8 +208,13 @@ const SignUp = () => {
           />
           <DupBtn onClick={isDuplicatedNickname}>중복 확인</DupBtn>
         </DivLine>
-        {isNicknameAvailable === true && <div>사용 가능한 닉네임입니다!</div>}
-        {isNicknameAvailable === false && <div>이미 사용 중인 닉네임입니다!</div>}
+
+        <CheckMsg
+          isVisible={isNicknameAvailable !== null}
+          isAvailable={isNicknameAvailable}
+        >
+          {isNicknameAvailable ? "사용 가능한 닉네임입니다." : "이미 사용 중인 닉네임입니다."}
+        </CheckMsg>
 
         <DivLine>
           <InputForm
@@ -213,33 +226,36 @@ const SignUp = () => {
           />
         </DivLine>
 
-        <ProfileContiner>
+        <ProfileContainer>
+          <h4>Profile</h4>
           <ProfileImgView
             src={previewImg}
             alt="프로필 이미지"
           />
-        </ProfileContiner>
+          <ProfileBtnContainer>
+            <ProfileImgAdd htmlFor="profileImg">이미지 선택</ProfileImgAdd>
+            <HiddenInput
+              style={{ display: "none" }}
+              type="file"
+              accept="image/*"
+              id="profileImg"
+              onChange={handleProfileChange}
+              ref={imgRef}
+            />
+            <ProfileDelete onClick={deleteProfile}>이미지 삭제</ProfileDelete>
+          </ProfileBtnContainer>
+        </ProfileContainer>
+
+        <SignUpContainer>
+          <SignUpBtn onClick={handleSignUp}>Sign Up</SignUpBtn>
+          <CheckMsg
+            isVisible={isSignUpAvailable !== null}
+            isAvailable={isSignUpAvailable}
+          >
+            {isSignUpAvailable ? "" : "중복 확인 버튼을 모두 확인해주세요."}
+          </CheckMsg>
+        </SignUpContainer>
       </FormContainer>
-
-      <div>
-        <ProfileImgView
-          src={previewImg}
-          alt="프로필 이미지"
-        />
-        <ProfileImgAdd htmlFor="profileImg">프로필 이미지 추가</ProfileImgAdd>
-        <HiddenInput
-          style={{ display: "none" }}
-          type="file"
-          accept="image/*"
-          id="profileImg"
-          onChange={handleProfileChange}
-          ref={imgRef}
-        />
-        <ProfileDelete onClick={deleteProfile}>프로필 삭제</ProfileDelete>
-      </div>
-
-      <button onClick={handleSignUp}>회원 가입</button>
-      {isSignUpAvailable === false && <div>모든 중복 확인을 해주십시오.</div>}
     </Container>
   );
 };
@@ -247,7 +263,7 @@ const SignUp = () => {
 export default SignUp;
 
 const Container = styled.div`
-  border: 1px solid blue;
+  background: rgb(246, 246, 246);
   padding: 10px;
   display: flex;
   flex-direction: column;
@@ -255,25 +271,34 @@ const Container = styled.div`
   align-items: center;
 `;
 
+const FormContainer = styled.div`
+  margin-top: 24px;
+  background: rgb(255, 255, 255);
+  width: 45vw;
+  height: auto;
+  overflow: auto;
+  border-radius: 8px;
+  padding: 20px;
+`;
+
 const InputForm = styled.input`
-  margin-left: 27%;
+  margin-left: 22%;
   background-color: #eee;
   font-size: 18px;
   border: none;
   border-radius: 7px;
-  padding: 12px 15px;
-  width: 35%;
+  padding: 14px 15px;
+  width: 45%;
   height: 50px;
 `;
 
 const DupBtn = styled.button`
   margin-left: 10px;
-  margin-right: 27%;
-  width: 8%;
+  margin-right: 22%;
+  width: 10%;
   height: 40px;
   color: #fff;
   border-radius: 5px;
-  padding: 10px 25px;
   cursor: pointer;
   box-shadow: inset 2px 2px 2px 0px rgba(255, 255, 255, 0.5), 7px 7px 20px 0px rgba(0, 0, 0, 0.1),
     4px 4px 5px 0px rgba(0, 0, 0, 0.1);
@@ -293,41 +318,6 @@ const DupBtn = styled.button`
   }
 `;
 
-// 프로필 사진 부분
-const ProfileImgView = styled.img`
-  border-radius: 50%;
-  width: 240px;
-  height: 240px;
-  border: 1px solid gray;
-`;
-
-const ProfileImgAdd = styled.label`
-  margin: 5px 0 20px 0;
-  font-weight: bold;
-  font-size: 13px;
-  display: inline-block;
-  cursor: pointer;
-`;
-
-const HiddenInput = styled.input`
-  display: none;
-`;
-
-const ProfileDelete = styled.label`
-  margin: 5px 0 20px 0;
-  font-weight: bold;
-  font-size: 13px;
-  display: inline-block;
-  cursor: pointer;
-`;
-
-const FormContainer = styled.div`
-  border: 1.5px solid blue;
-  margin-top: 100px;
-  width: 90vw;
-  height: auto;
-`;
-
 const DivLine = styled.div`
   display: flex;
   justify-content: space-between;
@@ -335,24 +325,104 @@ const DivLine = styled.div`
   margin-top: 30px;
 `;
 
-const ProfileContiner = styled.div`
-  width: 100%;
-  height: 400px;
+const CheckMsg = styled.div`
+  visibility: ${(props) => (props.isVisible ? "visible" : "hidden")};
+  color: ${(props) => (props.isAvailable ? "rgb(0, 140, 186)" : "rgb(250, 85, 85)")};
+  margin-left: 22%;
+  margin-top: 10px;
+`;
+
+const ProfileContainer = styled.div`
+  margin-top: 100px;
+  height: auto;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  border: 1px solid blue;
 `;
 
-const Horizaontal = styled.hr`
-  border: 0px solid;
-  height: 1px;
-  background-image: linear-gradient(
-    to right,
-    rgba(0, 0, 0, 0),
-    rgba(0, 140, 186, 0.5),
-    rgba(0, 0, 0, 0)
-  );
+const ProfileImgView = styled.img`
+  border-radius: 50%;
+  width: 240px;
+  height: 240px;
+  border: 5px outset rgba(0, 140, 186, 0.5);
+`;
+
+const ProfileBtnContainer = styled.div`
+  margin-top: 20px;
+  padding: 20px;
+  width: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const ProfileImgAdd = styled.label`
+  margin: 10px;
+  color: rgb(255, 255, 255);
+  font-size: 15px;
+  background: #1de9b6;
+  height: 32px;
+  width: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.5);
+  border-radius: 6px;
+  cursor: pointer;
+
+  &:hover {
+    box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.2);
+    background: #00bfa5;
+  }
+`;
+
+const HiddenInput = styled.input`
+  display: none;
+`;
+
+const ProfileDelete = styled.label`
+  margin: 10px;
+  color: rgb(255, 255, 255);
+  font-size: 15px;
+  background: #e91e63;
+  height: 32px;
+  width: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.5);
+  border-radius: 6px;
+  cursor: pointer;
+
+  &:hover {
+    box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.2);
+    background: #c2185b;
+  }
+`;
+
+const SignUpContainer = styled.div`
   margin-top: 50px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100px;
+`;
+
+const SignUpBtn = styled.button`
+  width: 15%;
+  margin: 0 auto;
+  height: 40px;
+  border: none;
+  border-radius: 6px;
+  font-size: 18px;
+  background: #90caf9;
+  color: rgb(255, 255, 255);
+  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+
+  &:hover {
+    box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.2);
+    background: #42a5f5;
+  }
 `;
