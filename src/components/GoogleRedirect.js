@@ -31,6 +31,7 @@ function GoogleRedirect() {
             state: {
               fullname: res.data.fullname,
               googleSub: res.data.googleSub,
+              khumail: res.data.email,
             },
           });
           console.log(res.data);
@@ -69,6 +70,6 @@ const Container = styled.div`
 `;
 
 const SpinnerImg = styled.img`
-  height: 330px;
-  width: 330px;
+  height: 150px;
+  width: 150px;
 `;

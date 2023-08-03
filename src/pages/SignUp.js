@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { useState, useRef } from "react";
 import default_profile from "../assets/return_logo.png";
@@ -9,8 +9,9 @@ const SignUp = () => {
   const location = useLocation();
   const fullname = location.state.fullname;
   const googleSub = location.state.googleSub;
+  const khumail = location.state.khumail;
 
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState(`${khumail}`);
   const [phoneNum, setPhoneNum] = useState("");
   const [nickname, setNickname] = useState("");
   const [stuId, setStuId] = useState("");
@@ -29,6 +30,7 @@ const SignUp = () => {
   const nicknameRef = useRef();
 
   const [isSignUpAvailable, setIsSignUpAvailable] = useState(null);
+  const navigate = useNavigate();
 
   const handleEmailChange = (e) => {
     setEmail(e.target.value);
@@ -103,13 +105,15 @@ const SignUp = () => {
   // 프로필 이미지 추가 버튼을 눌렀을 때 동작
   const handleProfileChange = () => {
     const imgFile = imgRef.current.files[0];
-    setProfileImg(imgFile);
+    if (imgFile) {
+      setProfileImg(imgFile);
 
-    const reader = new FileReader();
-    reader.readAsDataURL(imgFile);
-    reader.onloadend = () => {
-      setPreviewImg(reader.result);
-    };
+      const reader = new FileReader();
+      reader.readAsDataURL(imgFile);
+      reader.onloadend = () => {
+        setPreviewImg(reader.result);
+      };
+    }
   };
 
   //프로필 삭제 버튼 눌렀을 때 동작
@@ -144,6 +148,7 @@ const SignUp = () => {
 
       try {
         const response = await axios.post(process.env.REACT_APP_API + "/sign-up", formData);
+        navigate("/profile");
         console.log(response.data);
       } catch (error) {
         console.error("Error making POST request:", error);
@@ -227,7 +232,7 @@ const SignUp = () => {
         </DivLine>
 
         <ProfileContainer>
-          <h4>Profile</h4>
+          <ProfileText>Profile</ProfileText>
           <ProfileImgView
             src={previewImg}
             alt="프로필 이미지"
@@ -248,12 +253,12 @@ const SignUp = () => {
 
         <SignUpContainer>
           <SignUpBtn onClick={handleSignUp}>Sign Up</SignUpBtn>
-          <CheckMsg
+          <CheckSignUpMsg
             isVisible={isSignUpAvailable !== null}
             isAvailable={isSignUpAvailable}
           >
-            {isSignUpAvailable ? "" : "중복 확인 버튼을 모두 확인해주세요."}
-          </CheckMsg>
+            {isSignUpAvailable ? "..." : "중복 확인 버튼을 모두 확인해주세요."}
+          </CheckSignUpMsg>
         </SignUpContainer>
       </FormContainer>
     </Container>
@@ -263,8 +268,6 @@ const SignUp = () => {
 export default SignUp;
 
 const Container = styled.div`
-  background: rgb(246, 246, 246);
-  padding: 10px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -272,24 +275,40 @@ const Container = styled.div`
 `;
 
 const FormContainer = styled.div`
-  margin-top: 24px;
-  background: rgb(255, 255, 255);
+  margin-top: 80px;
+  margin-bottom: 80px;
+  background: #e3f2fd;
   width: 45vw;
   height: auto;
   overflow: auto;
-  border-radius: 8px;
+  border-radius: 10px;
   padding: 20px;
+  box-shadow: 0 4px 30px rgba(35, 35, 35, 0.1);
+
+  &:hover {
+    box-shadow: 0 8px 17px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  }
+`;
+
+const DivLine = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 `;
 
 const InputForm = styled.input`
   margin-left: 22%;
-  background-color: #eee;
+  background-color: #fff;
   font-size: 18px;
   border: none;
   border-radius: 7px;
   padding: 14px 15px;
   width: 45%;
   height: 50px;
+
+  &::placeholder {
+    color: #4dd0e1;
+  }
 `;
 
 const DupBtn = styled.button`
@@ -300,40 +319,28 @@ const DupBtn = styled.button`
   color: #fff;
   border-radius: 5px;
   cursor: pointer;
-  box-shadow: inset 2px 2px 2px 0px rgba(255, 255, 255, 0.5), 7px 7px 20px 0px rgba(0, 0, 0, 0.1),
-    4px 4px 5px 0px rgba(0, 0, 0, 0.1);
   outline: none;
-  background: rgb(96, 9, 240);
-  background: linear-gradient(0deg, rgba(0, 140, 186, 1) 0%, rgba(10, 160, 240, 1) 100%);
   border: none;
 
-  &:before {
-    height: 0%;
-    width: 2px;
-  }
+  background: #90caf9;
+  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.5);
 
   &:hover {
-    box-shadow: 1px 1px 2px 0 rgba(255, 255, 255, 0.5), -1px -1px 2px 0 rgba(116, 125, 136, 0.5),
-      inset -1px -1px 2px 0 rgba(255, 255, 255, 0.2), inset 1px 1px 2px 0 rgba(0, 0, 0, 0.4);
+    box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.2);
+    background: #42a5f5;
   }
-`;
-
-const DivLine = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 30px;
 `;
 
 const CheckMsg = styled.div`
   visibility: ${(props) => (props.isVisible ? "visible" : "hidden")};
   color: ${(props) => (props.isAvailable ? "rgb(0, 140, 186)" : "rgb(250, 85, 85)")};
-  margin-left: 22%;
-  margin-top: 10px;
+  margin-left: 23%;
+  margin-bottom: 15px;
+  margin-top: 3px;
 `;
 
 const ProfileContainer = styled.div`
-  margin-top: 100px;
+  margin-top: 30px;
   height: auto;
   display: flex;
   flex-direction: column;
@@ -345,7 +352,7 @@ const ProfileImgView = styled.img`
   border-radius: 50%;
   width: 240px;
   height: 240px;
-  border: 5px outset rgba(0, 140, 186, 0.5);
+  border: 4px solid #90caf9;
 `;
 
 const ProfileBtnContainer = styled.div`
@@ -402,7 +409,7 @@ const ProfileDelete = styled.label`
 `;
 
 const SignUpContainer = styled.div`
-  margin-top: 50px;
+  margin-top: 100px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -425,4 +432,17 @@ const SignUpBtn = styled.button`
     box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.2);
     background: #42a5f5;
   }
+`;
+
+const ProfileText = styled.p`
+  color: #4dd0e1;
+  font-size: 20px;
+`;
+
+const CheckSignUpMsg = styled.div`
+  visibility: ${(props) => (props.isVisible ? "visible" : "hidden")};
+  color: ${(props) => (props.isAvailable ? "rgb(0, 140, 186)" : "rgb(250, 85, 85)")};
+  margin: 0 auto;
+  margin-bottom: 15px;
+  margin-top: 3px;
 `;
