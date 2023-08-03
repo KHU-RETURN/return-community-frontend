@@ -21,7 +21,7 @@ const SignIn = () => {
 export default SignIn;
 
 const Container = styled.div`
-  background: #82b1ff;
+  background: #4688f1;
   padding: 0;
   margin: 0;
   height: 100vh;
@@ -47,9 +47,10 @@ const LogInBox = styled.div`
 
 const GoogleText = styled.h2`
   margin: 20px 0 20px;
+  font-size: 27px;
   padding: 0;
   text-transform: uppercase;
-  color: #82b1ff;
+  color: #4688f1;
 `;
 
 const GoogleBtn = styled.button`
