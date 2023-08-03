@@ -21,7 +21,7 @@ const WritePostModal = ({ setIsModalOpen, name}) => {
       const postData = `{
         "title" : ${title},
         "content" : ${content},
-        "isAnonymous" : false,
+        "isAnonymous" : ${false},
         "eventDate" : "2023-07-30 19:36:23",
         "thumbnailIndex": ${0}, 
       }`

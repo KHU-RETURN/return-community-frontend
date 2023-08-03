@@ -43,7 +43,7 @@ const Diary = () => {
       pageParam && setcurrentPage(isNaN(parseInt(pageParam, 10)) ? 1 : parseInt(pageParam, 10))
       return parseInt(pageParam,10);
     }
-    getDiaryList(extractPageNumFromURL(), pageSize)
+    getDiaryList(extractPageNumFromURL(), "createdAt")
     setNumberOfPages((diaryList.length / pageSize) + 1)
   }, [currentURL, pageSize, diaryList.length])
   
