@@ -257,7 +257,7 @@ const SignUp = () => {
             isVisible={isSignUpAvailable !== null}
             isAvailable={isSignUpAvailable}
           >
-            {isSignUpAvailable ? "..." : "중복 확인 버튼을 모두 확인해주세요."}
+            {isSignUpAvailable ? null : "중복 확인 버튼을 모두 확인해주세요."}
           </CheckSignUpMsg>
         </SignUpContainer>
       </FormContainer>

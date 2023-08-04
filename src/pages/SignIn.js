@@ -11,7 +11,7 @@ const SignIn = () => {
         <Link
           to={`https://accounts.google.com/o/oauth2/v2/auth?scope=openid https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile&access_type=offline&include_granted_scope=true&response_type=code&state=state_parameter_passthrough_value&redirect_uri=http://localhost:8080/code&client_id=${CLIENT_ID}`}
         >
-          <GoogleBtn>CONNECT WITH GOOGLE</GoogleBtn>
+          <GoogleBtn>Continue with Google</GoogleBtn>
         </Link>
       </LogInBox>
     </Container>
@@ -21,7 +21,7 @@ const SignIn = () => {
 export default SignIn;
 
 const Container = styled.div`
-  background: #4688f1;
+  background: rgb(248, 248, 248);
   padding: 0;
   margin: 0;
   height: 100vh;
@@ -40,9 +40,7 @@ const LogInBox = styled.div`
   letter-spacing: 1px;
   position: relative;
 
-  &:hover {
-    box-shadow: 0 8px 17px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-  }
+  box-shadow: 0 8px 17px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 `;
 
 const GoogleText = styled.h2`

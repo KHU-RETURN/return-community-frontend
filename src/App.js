@@ -4,6 +4,7 @@ import Landing from "./pages/Landing";
 import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
 import Profile from "./pages/Profile";
+import UpdateProfile from "./pages/UpdateProfile";
 import GoogleRedirect from "./components/GoogleRedirect";
 
 const App = () => {
@@ -30,6 +31,10 @@ const App = () => {
         <Route
           path="/profile"
           element={<Profile />}
+        />
+        <Route
+          path="/profile/update"
+          element={<UpdateProfile />}
         />
       </Routes>
     </>

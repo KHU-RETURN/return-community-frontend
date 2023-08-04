@@ -1,9 +1,12 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useCookies } from "react-cookie";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
+import default_profile from "../assets/return_logo.png";
 
 const Profile = () => {
+  const navigate = useNavigate();
   const [cookies] = useCookies();
   const [state, setState] = useState({
     profileImg: "",
@@ -17,7 +20,9 @@ const Profile = () => {
     Authorization: `Bearer ${token}`,
   };
 
-  const imgURL = "";
+  useEffect(() => {
+    getProfileInfo();
+  }, []); // 초기 설정 (Mount시점에 API 호출)
 
   const getProfileInfo = async () => {
     try {
@@ -25,41 +30,56 @@ const Profile = () => {
         headers,
       });
       console.log(res.data);
+      let profileImg = res.data.profileImgURL;
+      if (profileImg === null) {
+        profileImg = default_profile;
+      } else {
+        profileImg = `${process.env.REACT_APP_API}` + `${res.data.profileImgURL}`;
+      }
       setState({
-        ...state,
-        profileImg: `${process.env.REACT_APP_API}` + `${res.data.profileImgURL}`,
+        profileImg: profileImg,
         email: res.data.email,
         nickname: res.data.nickname,
         phoneNum: res.data.phoneNumber,
         stuId: res.data.studentId,
       });
-      imgURL = process.env.REACT_APP_API + `${state.profileImg}`;
     } catch (error) {
       console.log(error);
     }
   };
 
-  useEffect(() => {
-    getProfileInfo();
-  }, []); // 초기 설정 (Mount시점에 API 호출)
+  const LinkPage = () => {
+    navigate("update", {
+      state: {
+        profileImg: state.profileImg,
+        email: state.email,
+        nickname: state.nickname,
+        phoneNum: state.phoneNum,
+        stuId: state.stuId,
+      },
+    });
+  };
 
   return (
     <div>
-      <div>{token}</div>
       <div>
-        <Imgd src={state.profileImg} />
+        <ProfileImgView src={state.profileImg} />
       </div>
       <div>{state.email}</div>
       <div>{state.nickname}</div>
       <div>{state.phoneNum}</div>
       <div>{state.stuId}</div>
+      <div>
+        <button onClick={LinkPage}>Edit</button>
+      </div>
     </div>
   );
 };
 
 export default Profile;
 
-const Imgd = styled.img`
-  width: 500px;
-  height: 500px;
+const ProfileImgView = styled.img`
+  width: 330px;
+  height: 330px;
+  border-radius: 50%;
 `;
