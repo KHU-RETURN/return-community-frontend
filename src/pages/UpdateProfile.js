@@ -6,43 +6,66 @@ import { useLocation, useNavigate } from "react-router-dom";
 import default_profile from "../assets/return_logo.png";
 
 const Profile = () => {
+  const imgRef = useRef();
   const [cookies] = useCookies();
   const location = useLocation();
   const navigate = useNavigate();
   const [beforeState, setBeforeState] = useState({
-    profileImg: location.state.profileImg,
+    profile: location.state.profileImg,
     email: location.state.email,
     nickname: location.state.nickname,
     phoneNum: location.state.phoneNum,
     stuId: location.state.stuId,
   });
-  const token = cookies["jwt-token"];
-  const headers = {
-    Authorization: `Bearer ${token}`,
-  };
   const [afterState, setAfterState] = useState({
     ...beforeState,
   });
 
-  const [dupMsg, setDupMsg] = useState("");
-  const [isEditEmail, setIsEditEmail] = useState(false);
-  const [isEditNickname, setIsEditNickname] = useState(false);
-  const [isEditPhoneNum, setIsEditPhoneNum] = useState(false);
-  const [isEditStuId, setIsEditStuId] = useState(false);
-
-  const [isEdit, setIsEdit] = useState(false);
-
-  const toggleIsEdit = () => setIsEdit(!isEdit); // isEdit을 반전시키는 토글
-
-  const handleQuitEdit = () => {
-    setIsEdit(false);
+  const token = cookies["jwt-token"];
+  const headers = {
+    Authorization: `Bearer ${token}`,
   };
 
+  const [dupMsg, setDupMsg] = useState("");
+
+  const [previewImg, setPreviewImg] = useState(`${beforeState.profile}`);
+  const [profileImg, setProfileImg] = useState("");
+
+  const [nicknameAvail, setNicknameAvail] = useState(true);
+  const [phoneNumAvail, setPhoneNumAvail] = useState(true);
+  const [stuIdAvail, setStuIdAvail] = useState(true);
+
   const handleState = (e) => {
-    setAfterState({
-      ...afterState,
-      [e.target.name]: e.target.value,
-    });
+    if (e.target.name === "stuId") {
+      const value = e.target.value;
+      setAfterState((prevAfterState) => ({
+        ...prevAfterState,
+        stuId: value.slice(0, 10),
+      }));
+    } else {
+      setAfterState({
+        ...afterState,
+        [e.target.name]: e.target.value,
+      });
+    }
+  };
+
+  const handleProfileChange = () => {
+    const imgFile = imgRef.current.files[0];
+    if (imgFile) {
+      setProfileImg(imgFile);
+
+      const reader = new FileReader();
+      reader.readAsDataURL(imgFile);
+      reader.onloadend = () => {
+        setPreviewImg(reader.result);
+      };
+    }
+  };
+
+  const deleteProfile = () => {
+    setPreviewImg(default_profile);
+    setProfileImg("");
   };
 
   const handleBack = () => {
@@ -51,15 +74,20 @@ const Profile = () => {
   };
 
   const handleUpdate = async () => {
+    let nicknameAvail = true;
+    let phoneNumAvail = true;
+    let stuIdAvail = true;
+
     if (beforeState.nickname !== afterState.nickname) {
       try {
         const res = await axios.get(
           process.env.REACT_APP_API + `/validate-nickname/${afterState.nickname}`
         );
-        console.log(res.data);
-        setDupMsg("사용가능한 닉네임입니다.");
+        console.log("사용 가능한 닉네임입니다.");
       } catch (error) {
+        console.log("이미 존재하는 닉네임입니다.");
         setDupMsg("이미 존재하는 닉네임입니다.");
+        nicknameAvail = false;
       }
     }
     if (beforeState.phoneNum !== afterState.phoneNum) {
@@ -67,18 +95,42 @@ const Profile = () => {
         const res = await axios.get(
           process.env.REACT_APP_API + `/validate-phone-number/${afterState.phoneNum}`
         );
-        console.log(res.data);
-        setDupMsg("사용가능한 번호입니다.");
+        console.log("사용가능한 번호입니다.");
       } catch (error) {
-        setDupMsg("이미 존재하는 번호입니다.");
+        console.log("이미 가입한 번호이거나 양식이 잘못되었습니다.");
+        setDupMsg("이미 가입한 번호이거나 양식이 잘못되었습니다.");
+        phoneNumAvail = false;
       }
     }
+    if (afterState.stuId.length !== 10) {
+      console.log("학번을 다시 확인해주세요");
+      setDupMsg("학번을 다시 확인해주세요");
+      stuIdAvail = false;
+    }
+
+    if (nicknameAvail && phoneNumAvail && stuIdAvail) {
+      // 회원 정보 수정 api 연동
+      console.log("회원가입 가능합니다");
+    }
   };
+
   return (
     <div>
       <div>
-        <ProfileImgView src={beforeState.profileImg} />
-        <button>프로필 사진 변경</button>
+        <ProfileImgView
+          src={previewImg}
+          alt="profile preview"
+        />
+        <label htmlFor="profileBtn">프로필 사진 변경</label>
+        <input
+          style={{ display: "none" }}
+          type="file"
+          accept="image/*"
+          id="profileBtn"
+          onChange={handleProfileChange}
+          ref={imgRef}
+        />
+        <label onClick={deleteProfile}>프로필 사진 삭제</label>
       </div>
       <div>
         <div>{beforeState.email}</div>
@@ -86,6 +138,8 @@ const Profile = () => {
       <div>
         <input
           name="nickname"
+          type="text"
+          maxLength={8}
           value={afterState.nickname}
           onChange={handleState}
         />
@@ -93,16 +147,19 @@ const Profile = () => {
       <div>
         <input
           name="phoneNum"
+          type="text"
           value={afterState.phoneNum}
+          maxLength={13}
           onChange={handleState}
         />
       </div>
       <div>
         <input
           name="stuId"
+          type="text"
           value={afterState.stuId}
-          onChange={handleState}
           maxLength={10}
+          onChange={handleState}
         />
       </div>
       <div>

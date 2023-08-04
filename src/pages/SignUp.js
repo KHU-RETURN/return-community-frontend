@@ -25,7 +25,7 @@ const SignUp = () => {
   // previewImg : 서버로 보내는 이미지가 아닌, 파일 첨부로부터 미리 보는 프로필 사진
   // 서버로 보내는 파일이랑 형식이 달라서 따로 지정함
 
-  const emailRef = useRef(); // email input 태그에 focus를 하기 위함
+  const emailRef = useRef();
   const phoneNumRef = useRef();
   const nicknameRef = useRef();
 
