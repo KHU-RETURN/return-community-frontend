@@ -17,6 +17,7 @@ const Profile = () => {
     phoneNum: location.state.phoneNum,
     stuId: location.state.stuId,
   });
+  const name = location.state.name;
   const [afterState, setAfterState] = useState({
     ...beforeState,
   });
@@ -31,9 +32,7 @@ const Profile = () => {
   const [previewImg, setPreviewImg] = useState(`${beforeState.profile}`);
   const [profileImg, setProfileImg] = useState("");
 
-  const [nicknameAvail, setNicknameAvail] = useState(true);
-  const [phoneNumAvail, setPhoneNumAvail] = useState(true);
-  const [stuIdAvail, setStuIdAvail] = useState(true);
+  const [isChangeProfile, setIsChangeProfile] = useState(false);
 
   const handleState = (e) => {
     if (e.target.name === "stuId") {
@@ -53,7 +52,9 @@ const Profile = () => {
   const handleProfileChange = () => {
     const imgFile = imgRef.current.files[0];
     if (imgFile) {
+      // 이미지를 바꾼 경우
       setProfileImg(imgFile);
+      setIsChangeProfile(true);
 
       const reader = new FileReader();
       reader.readAsDataURL(imgFile);
@@ -111,6 +112,26 @@ const Profile = () => {
     if (nicknameAvail && phoneNumAvail && stuIdAvail) {
       // 회원 정보 수정 api 연동
       console.log("회원가입 가능합니다");
+      const formData = new FormData();
+
+      const userData = {
+        studentId: `${afterState.stuId}`,
+        name: `${name}`,
+        nickname: `${afterState.nickname}`,
+        phoneNumber: `${afterState.phoneNum}`,
+        email: `${afterState.email}`,
+        isProfileImgChanged: isChangeProfile,
+      };
+      formData.append("updateRequest", JSON.stringify(userData));
+      formData.append("profileImg", profileImg);
+
+      try {
+        const res = await axios.put(process.env.REACT_APP_API + "/profile", formData, { headers });
+        navigate(-1); //이전 페이지 이동
+        console.log(res.data);
+      } catch (error) {
+        console.log(error);
+      }
     }
   };
 
@@ -177,5 +198,5 @@ const ProfileImgView = styled.img`
   width: 330px;
   height: 330px;
   border-radius: 50%;
-  border: 3px solid red;
+  overflow: hidden;
 `;

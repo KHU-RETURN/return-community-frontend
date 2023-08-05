@@ -14,6 +14,7 @@ const Profile = () => {
     nickname: "",
     phoneNum: "",
     stuId: "",
+    name: "",
   });
   const token = cookies["jwt-token"]; // JWT는 token에 담겨있음
   const headers = {
@@ -38,6 +39,7 @@ const Profile = () => {
       }
       setState({
         profileImg: profileImg,
+        name: res.data.name,
         email: res.data.email,
         nickname: res.data.nickname,
         phoneNum: res.data.phoneNumber,
@@ -52,6 +54,7 @@ const Profile = () => {
     navigate("update", {
       state: {
         profileImg: state.profileImg,
+        name: state.name,
         email: state.email,
         nickname: state.nickname,
         phoneNum: state.phoneNum,
@@ -82,4 +85,5 @@ const ProfileImgView = styled.img`
   width: 330px;
   height: 330px;
   border-radius: 50%;
+  overflow: hidden;
 `;

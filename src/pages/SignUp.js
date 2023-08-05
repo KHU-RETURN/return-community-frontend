@@ -124,12 +124,7 @@ const SignUp = () => {
 
   //회원가입 버튼 눌렀을 때 동작
   const handleSignUp = async () => {
-    if (
-      isEmailAvailable === true &&
-      isPhoneNumAvailable === true &&
-      isNicknameAvailable === true &&
-      stuId.length === 10
-    ) {
+    if (isEmailAvailable && isPhoneNumAvailable && isNicknameAvailable && stuId.length === 10) {
       setIsSignUpAvailable(true);
       const phoneNumWithoutHyphen = phoneNum.replace(/-/g, "");
       const formData = new FormData();
@@ -147,9 +142,9 @@ const SignUp = () => {
       formData.append("profileImg", profileImg);
 
       try {
-        const response = await axios.post(process.env.REACT_APP_API + "/sign-up", formData);
+        const res = await axios.post(process.env.REACT_APP_API + "/sign-up", formData);
         navigate("/profile");
-        console.log(response.data);
+        console.log(res.data);
       } catch (error) {
         console.error("Error making POST request:", error);
       }
