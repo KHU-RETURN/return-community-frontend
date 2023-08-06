@@ -77,6 +77,11 @@ const Diary = () => {
               <DiaryBlock>
                 <Title>{post.title}</Title>
                 <Content>{post.content || "내용이 없다"}</Content>
+                <DiaryInfoBlock>
+                  <ViewCount>조회수 {post.viewCount}</ViewCount>
+                  <LikeCount>👍 {post.likeCount}</LikeCount>
+                  <CommentCount>댓글 {post.commentCount}</CommentCount>
+                </DiaryInfoBlock>
               </DiaryBlock>
             ))}
           </DiaryListContainer>
@@ -142,3 +147,20 @@ const DiaryBlock = styled.div`
 const Title = styled.div``;
 
 const Content = styled.div``;
+
+const DiaryInfoBlock = styled.div`
+  display: flex;
+  justify-content: right;
+`;
+
+const ViewCount = styled.div`
+
+`;
+
+const LikeCount = styled.div`
+  padding: 0 10px;
+`;
+
+const CommentCount = styled.div`
+  padding: 0 10px;
+`;
