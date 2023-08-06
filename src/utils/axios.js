@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-  const authorizationCode = process.env.REACT_APP_AUTHORIZATIONCODE;
+const authorizationCode = process.env.REACT_APP_AUTHORIZATIONCODE;
+const API_URL = process.env.REACT_APP_API;
 
 export const getDiaryList = (page, sort) => {
   /**
@@ -9,7 +10,7 @@ export const getDiaryList = (page, sort) => {
   let config = {
     method: 'get',
     maxBodyLength: Infinity,
-    url: `https://khu-return.site/diary?page=${page}&sort=${sort}`,
+    url: API_URL + `/diary?page=${page}&sort=${sort}`,
     headers: { 
       'Authorization': `${authorizationCode}`,     }
   };
@@ -25,22 +26,23 @@ export const getDiaryList = (page, sort) => {
 }
 
 export const uploadPost = (data) => {
-let config = {
-  method: 'post',
-  maxBodyLength: Infinity,
-  url: 'https://khu-return.site/diary',
-  headers: { 
-    'Content-Type': 'multipart/form-data',
-    'Authorization': `${authorizationCode}`
-  },
-  data : data
-};
+  let config = {
+    method: 'post',
+    maxBodyLength: Infinity,
+    url: API_URL + '/diary',
+    headers: { 
+      'Content-Type': 'multipart/form-data',
+      'Authorization': `${authorizationCode}`
+    },
+    data : data
+  };
 
-axios.request(config)
-.then((response) => {
-  console.log(JSON.stringify(response.data));
-})
-.catch((error) => {
-  console.log(error);
-});
+  axios.request(config)
+  .then((response) => {
+    console.log(JSON.stringify(response.data));
+  })
+  .catch((error) => {
+    console.log(error);
+  });
 }
+
