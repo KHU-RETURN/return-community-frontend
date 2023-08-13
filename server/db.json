@@ -1,0 +1,158 @@
+{
+  "list": [
+    {
+      "id": 1,
+      "title": "게시물 쓰는 법",
+      "content": "작성하기를 누른다",
+      "likeCount": 1,
+      "commentCount": 1,
+      "user": {
+        "userId": 2020103722,
+        "profileImgURL": "",
+        "name": "민수민"
+      },
+      "createdDate": "2023/05/19",
+      "isMyPost": true
+    },
+    {
+      "id": 2,
+      "title": "리액트란?",
+      "content": "나도 모른다",
+      "likeCount": 2,
+      "commentCount": 4,
+      "user": {
+        "userId": 2020103722,
+        "profileImgURL": "",
+        "name": "김수민"
+      },
+      "createdDate": "2023/05/19",
+      "isMyPost": false
+    },
+    {
+      "id": 3,
+      "title": "Java",
+      "content": "공부 중",
+      "likeCount": 1,
+      "commentCount": 1,
+      "user": {
+        "userId": 2020103722,
+        "profileImgURL": "",
+        "name": "민수민"
+      },
+      "createdDate": "2023/05/29",
+      "isMyPost": true
+    },
+    {
+      "id": 4,
+      "title": "HTML",
+      "content": "작성하기를 누른다",
+      "likeCount": 1,
+      "commentCount": 1,
+      "user": {
+        "userId": 2020103722,
+        "profileImgURL": "",
+        "name": "민수민"
+      },
+      "createdDate": "2023/05/31",
+      "isMyPost": true
+    },
+    {
+      "id": 5,
+      "title": "중간고사",
+      "content": "작성하기를 누른다",
+      "likeCount": 1,
+      "commentCount": 1,
+      "user": {
+        "userId": 2020103722,
+        "profileImgURL": "",
+        "name": "민수민"
+      },
+      "createdDate": "2023/06/24",
+      "isMyPost": true
+    },
+    {
+      "id": 6,
+      "title": "기말고사",
+      "content": "작성하기를 누른다",
+      "likeCount": 1,
+      "commentCount": 1,
+      "user": {
+        "userId": 2020103722,
+        "profileImgURL": "",
+        "name": "민수민"
+      },
+      "createdDate": "2023/06/31",
+      "isMyPost": true
+    },
+    {
+      "id": 7,
+      "title": "방학 공부",
+      "content": "작성하기를 누른다",
+      "likeCount": 1,
+      "commentCount": 1,
+      "user": {
+        "userId": 2020103722,
+        "profileImgURL": "",
+        "name": "민수민"
+      },
+      "createdDate": "2023/08/4",
+      "isMyPost": true
+    },
+    {
+      "id": 8,
+      "title": "스프링",
+      "content": "작성하기를 누른다",
+      "likeCount": 1,
+      "commentCount": 1,
+      "user": {
+        "userId": 2020103722,
+        "profileImgURL": "",
+        "name": "민수민"
+      },
+      "createdDate": "2023/08/5",
+      "isMyPost": true
+    },
+    {
+      "id": 9,
+      "title": "수강신청ㅋㅋ",
+      "content": "작성하기를 누른다",
+      "likeCount": 1,
+      "commentCount": 1,
+      "user": {
+        "userId": 2020103722,
+        "profileImgURL": "",
+        "name": "민수민"
+      },
+      "createdDate": "2023/08/08",
+      "isMyPost": true
+    },
+    {
+      "id": 10,
+      "title": "재수강",
+      "content": "작성하기를 누른다",
+      "likeCount": 1,
+      "commentCount": 1,
+      "user": {
+        "userId": 2020103722,
+        "profileImgURL": "",
+        "name": "민수민"
+      },
+      "createdDate": "2023/08/12",
+      "isMyPost": true
+    },
+    {
+      "id": 11,
+      "title": "전학년 수강신청",
+      "content": "잊지말자",
+      "likeCount": 1,
+      "commentCount": 1,
+      "user": {
+        "userId": 2020103722,
+        "profileImgURL": "",
+        "name": "민수민"
+      },
+      "createdDate": "2023/08/16",
+      "isMyPost": true
+    }
+  ]
+}
