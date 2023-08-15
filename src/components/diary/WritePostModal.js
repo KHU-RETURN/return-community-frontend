@@ -18,13 +18,13 @@ const WritePostModal = ({ setIsModalOpen, name}) => {
     try{
       const editorlns = ref?.current?.getInstance();
       const content = editorlns.getHTML();
-      const postData = `{
-        "title" : ${title},
-        "content" : ${content},
-        "isAnonymous" : ${false},
+      const postData = {
+        "title" : title,
+        "content" : content,
+        "isAnonymous" : true,
         "eventDate" : "2023-07-30 19:36:23",
-        "thumbnailIndex": ${0}, 
-      }`
+        "thumbnailIndex": 0, 
+      }
     if (content === POST_IS_EMPTY) {
       alert('내용을 입력해주세요');
       return
