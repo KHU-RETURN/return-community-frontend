@@ -1,7 +1,9 @@
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const authorizationCode = process.env.REACT_APP_AUTHORIZATIONCODE;
 const API_URL = process.env.REACT_APP_API;
+
 
 export const getDiaryList = (page, sort, setDiaryList) => {
   let config = {
@@ -45,11 +47,11 @@ export const uploadPost = (postData) => {
   });
 }
 
-export const getDiaryDetail = (postId) => {
+export const getDiaryDetail = (diaryId, navigate) => {
   let config = {
     method: 'get',
     maxBodyLength: Infinity,
-    url: API_URL + `/diary/${postId}`,
+    url: API_URL + `/diary/${diaryId}`,
     headers: { 
       'Authorization': `Bearer ${authorizationCode}`,
     }
@@ -58,6 +60,8 @@ export const getDiaryDetail = (postId) => {
   axios.request(config)
   .then((response) => {
     console.log(JSON.stringify(response.data));
+    const diary = response.data
+    navigate(`/diary/${diary.diaryId}`, { state : diary })
   })
   .catch((error) => {
     console.log(error);

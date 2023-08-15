@@ -38,7 +38,7 @@ const Diary = () => {
 
   const handlePostClick = async (post) => {
     const postDetail = await getDiaryDetail(post.postId);
-    navigate(`/diary/${post.postId}`, { state : postDetail })
+    
   }
 
   useEffect(() => {
@@ -81,16 +81,25 @@ const Diary = () => {
               <RegulatorButton type="radio" id="10" name="pageSize" value="10" classname={pageSize === 10 ? "selected" : "non-selected"} onChange={()=>setPageSize(10)}/>
               <label for="10">10</label>
             </PageSizeRegulator>
-            {/** To do: 현재 서버의 일기장 리스트가 비어있는 관계로 /store/fakeDiary.js 의 가짜 데이터를 사용중, 추후 서버에 일기장 데이터 추가 시 변경 요망 */}
-            {searchedList ? (searchedList.map((post) => (
-              <DiaryBlock onClick={() => {navigate(`/diary/${post.postId}`, { state : post })}}>
-                <Title>{post.title}</Title>
-                <Content>{post.content || "내용이 없다"}</Content>
-                <DiaryInfoBlock>
-                  <ViewCount>조회수 {post.viewCount}</ViewCount>
-                  <LikeCount>👍 {post.likeCount}</LikeCount>
-                  <CommentCount>댓글 {post.commentCount}</CommentCount>
-                </DiaryInfoBlock>
+            {searchedList ? (searchedList.map((diary) => (
+              <DiaryBlock onClick={() => {getDiaryDetail(diary.diaryId, navigate)}}>
+                <DiaryHeader>
+                  <ThumbnailBox>
+                    <ThumbnailImg src={diary.thumbnailImgURL} alt="Thumbnail"/>
+                  </ThumbnailBox>
+                  <Title>{diary.title}</Title>
+                </DiaryHeader>
+                <DiaryBody>
+                  <AuthorBlock>
+                    <AuthorProfileImg src={diary.member.profileImgURL} />
+                    <Author>{diary.member.name}</Author>
+                  </AuthorBlock>
+                  <DiaryInfoBlock>
+                    <ViewCount>조회수 {diary.viewCount}</ViewCount>
+                    <LikeCount>👍 {diary.likeCount}</LikeCount>
+                    <CommentCount>댓글 {diary.commentCount}</CommentCount>
+                  </DiaryInfoBlock>
+                </DiaryBody>
               </DiaryBlock>
             ))): "Loading"}
           </DiaryListContainer>
@@ -148,15 +157,44 @@ const PageSizeRegulator = styled.div``;
 const RegulatorButton = styled.input``;
 
 const DiaryBlock = styled.div`
-  width: 300px;
+  width: 800px;
   margin: auto;
   border : 1px solid
 `;
 
+const DiaryHeader = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
+const DiaryBody = styled.div`
+  display: flex;
+  justify-content: right;
+`;
+
 const Title = styled.div``;
 
-const Content = styled.div``;
+const ThumbnailBox = styled.div`
+  width: 64px;
+  height: 64px;
+  background: #f1f1f1;
+  margin: 10px;
+`;
 
+const ThumbnailImg = styled.img`
+  width: 64px;
+  height: 64px;
+  object-fit: cover;
+`;
+
+const AuthorBlock = styled.div`
+  display: flex;
+  margin-right: 10px;
+`;
+
+const AuthorProfileImg = styled.img``;
+
+const Author = styled.div``;
 const DiaryInfoBlock = styled.div`
   display: flex;
   justify-content: right;
