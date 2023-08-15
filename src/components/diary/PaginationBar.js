@@ -3,10 +3,6 @@ import { Link } from 'react-router-dom';
 import styled from 'styled-components'
 
 const PaginationBar = ({currentPage, totalPages, setPage}) => {
-  const handlePageChange = (e) => {
-    const newPage = e.currentTarget.key;
-    setPage(newPage);
-  }
   const renderLinks = (totalPages) => {
     const links = [];
     for (let pageNum = 1; pageNum <= totalPages; pageNum++) {

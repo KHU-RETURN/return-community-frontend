@@ -3,21 +3,18 @@ import axios from 'axios';
 const authorizationCode = process.env.REACT_APP_AUTHORIZATIONCODE;
 const API_URL = process.env.REACT_APP_API;
 
-export const getDiaryList = (page, sort) => {
-  /**
-   * To do: GET /diary/list api가 변경되면 getDiaryList url cursor 부분 변경 요망
-   */
+export const getDiaryList = (page, sort, setDiaryList) => {
   let config = {
     method: 'get',
     maxBodyLength: Infinity,
     url: API_URL + `/diary?page=${page}&sort=${sort}`,
     headers: { 
-      'Authorization': `${authorizationCode}`,     }
+      'Authorization': `Bearer ${authorizationCode}`,
+    }
   };
-  
   axios.request(config)
   .then((response) => {
-    console.log(JSON.stringify(response.data));
+    setDiaryList(response.data)
   })
   .catch((error) => {
     console.log(error);
@@ -25,14 +22,16 @@ export const getDiaryList = (page, sort) => {
   
 }
 
-export const uploadPost = (data) => {
+export const uploadPost = (postData) => {
+  let data = new FormData();
+  data.append(postData);
   let config = {
     method: 'post',
     maxBodyLength: Infinity,
     url: API_URL + '/diary',
     headers: { 
       'Content-Type': 'multipart/form-data',
-      'Authorization': `${authorizationCode}`
+      'Authorization': `Bearer ${authorizationCode}`, 
     },
     data : data
   };
@@ -46,3 +45,41 @@ export const uploadPost = (data) => {
   });
 }
 
+export const getDiaryDetail = (postId) => {
+  let config = {
+    method: 'get',
+    maxBodyLength: Infinity,
+    url: API_URL + `/diary/${postId}`,
+    headers: { 
+      'Authorization': `Bearer ${authorizationCode}`,
+    }
+  };
+  
+  axios.request(config)
+  .then((response) => {
+    console.log(JSON.stringify(response.data));
+  })
+  .catch((error) => {
+    console.log(error);
+  });
+  
+}
+
+export const getCommentList = (postId) => {
+  let config = {
+    method: 'get',
+    maxBodyLength: Infinity,
+    url: API_URL + `/diary/${postId}/comment`,
+    headers: { 
+      'Authorization': `Bearer ${authorizationCode}`,
+    }
+  };
+  
+  axios.request(config)
+  .then((response) => {
+    console.log(JSON.stringify(response.data));
+  })
+  .catch((error) => {
+    console.log(error);
+  });
+}
