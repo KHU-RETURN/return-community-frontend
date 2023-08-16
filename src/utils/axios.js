@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
 
 const authorizationCode = process.env.REACT_APP_AUTHORIZATIONCODE;
 const API_URL = process.env.REACT_APP_API;
@@ -16,6 +15,7 @@ export const getDiaryList = (page, sort, setDiaryList) => {
   };
   axios.request(config)
   .then((response) => {
+    console.log(response.data)
     setDiaryList(response.data)
   })
   .catch((error) => {
@@ -69,7 +69,7 @@ export const getDiaryDetail = (diaryId, navigate) => {
   
 }
 
-export const getCommentList = (postId) => {
+export const getCommentList = (postId, setCommentList) => {
   let config = {
     method: 'get',
     maxBodyLength: Infinity,
@@ -81,7 +81,68 @@ export const getCommentList = (postId) => {
   
   axios.request(config)
   .then((response) => {
-    console.log(JSON.stringify(response.data));
+    setCommentList(response.data);
+  })
+  .catch((error) => {
+    console.log(error);
+  });
+}
+
+export const postComment = (postId, data) => {
+  let config = {
+    method: 'post',
+    maxBodyLength: Infinity,
+    url: API_URL + `/diary/${postId}/comment`,
+    headers: { 
+      'Content-Type': 'application/json', 
+      'Authorization': `Bearer ${authorizationCode}`,
+    },
+    data : JSON.stringify(data)
+  };
+  axios.request(config)
+  .then(() => {
+    alert("댓글이 등록되었습니다.")
+    window.location.reload();
+  })
+  .catch((error) => {
+    console.log(error);
+  });
+}
+
+export const editComment = (postId, commentId, data) => {
+  let config = {
+    method: 'patch',
+    maxBodyLength: Infinity,
+    url: API_URL + `/diary/${postId}/comment/${commentId}`,
+    headers: { 
+      'Content-Type': 'application/json', 
+      'Authorization': `Bearer ${authorizationCode}`,
+    },
+    data : JSON.stringify({data})
+  };
+  axios.request(config)
+  .then(() => {
+    alert("댓글이 수정되었습니다.")
+    window.location.reload();
+  })
+  .catch((error) => {
+    console.log(error);
+  });
+}
+
+export const deleteComment = (postId, commentId) => {
+  let config = {
+    method: 'delete',
+    maxBodyLength: Infinity,
+    url: API_URL + `/diary/${postId}/comment/${commentId}`,
+    headers: { 
+      'Authorization': `Bearer ${authorizationCode}`,
+    }
+  };
+  axios.request(config)
+  .then(() => {
+    alert("댓글이 삭제되었습니다.")
+    window.location.reload();
   })
   .catch((error) => {
     console.log(error);

@@ -15,6 +15,7 @@ import SearchBar from '../components/SearchBar'
 const Diary = () => {
   const currentURL = useLocation().search
   const navigate = useNavigate();
+  const STATIC_URL = process.env.REACT_APP_API;
   const [diaryList, setDiaryList] = useState([])
 
   const [currentPage, setcurrentPage] = useState(1)
@@ -85,13 +86,13 @@ const Diary = () => {
               <DiaryBlock onClick={() => {getDiaryDetail(diary.diaryId, navigate)}}>
                 <DiaryHeader>
                   <ThumbnailBox>
-                    <ThumbnailImg src={diary.thumbnailImgURL} alt="Thumbnail"/>
+                    <ThumbnailImg src={`${STATIC_URL + diary.profileImgURL}`} alt="Thumbnail"/>
                   </ThumbnailBox>
                   <Title>{diary.title}</Title>
                 </DiaryHeader>
                 <DiaryBody>
                   <AuthorBlock>
-                    <AuthorProfileImg src={diary.member.profileImgURL} />
+                    <AuthorProfileImg src={`${STATIC_URL + diary.member.profileImgURL}`} />
                     <Author>{diary.member.name}</Author>
                   </AuthorBlock>
                   <DiaryInfoBlock>
@@ -189,10 +190,16 @@ const ThumbnailImg = styled.img`
 
 const AuthorBlock = styled.div`
   display: flex;
+  align-items: center;
   margin-right: 10px;
 `;
 
-const AuthorProfileImg = styled.img``;
+const AuthorProfileImg = styled.img`
+  width: 20px;
+  height: 20px;
+  margin-right: 5px;
+  border-radius: 100px;
+`;
 
 const Author = styled.div``;
 const DiaryInfoBlock = styled.div`
