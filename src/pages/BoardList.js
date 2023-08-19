@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import Posts from "../components/posts";
 import Pagination from "../components/pagination";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, json, useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
 <style>
   @import
@@ -12,6 +12,7 @@ import { styled } from "styled-components";
 function BoardList() {
   const navigate = useNavigate();
   let [list, setList] = useState([]);
+  const [userId, setUserId] = useState(0);
   const [page, setPage] = useState(1); //현재 페이지
   const limit = 10; // posts가 보일 최대한의 갯수
   const offset = (page - 1) * limit; // 시작점과 끝점을 구하는 offset
@@ -27,6 +28,7 @@ function BoardList() {
     }
   };
 
+  //post list 가져오기
   function getBoardList() {
     axios
       .get("http://localhost:3001/list")
@@ -40,7 +42,19 @@ function BoardList() {
       });
   }
 
+  //사용자 profile 조회
+  const getUserProfile = async () => {
+    try {
+      const response = await axios.get("http://localhost:3001/profile");
+      console.log(response.data[0].studentId);
+      setUserId(response.data[0].studentId);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
+    getUserProfile();
     getBoardList();
   }, []);
 
@@ -64,7 +78,7 @@ function BoardList() {
           </tr>
         </thead>
         <tbody>
-          <Posts info={postsData(list)} />
+          <Posts info={postsData(list)} userId={userId} />
         </tbody>
       </List>
       <Pagination

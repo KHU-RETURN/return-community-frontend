@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { styled } from "styled-components";
 import { useNavigate } from "react-router-dom";
 
-function Posts({ info }) {
+function Posts({ info, userId }) {
   const navigate = useNavigate();
 
   return info !== undefined ? (
@@ -12,7 +12,9 @@ function Posts({ info }) {
       return (
         <LinkToDetail
           onClick={() => {
-            navigate("/detail/" + id, { state: { ...list } });
+            navigate("/detail/" + id, {
+              state: { list: { ...list }, userId: userId },
+            });
           }}
           key={id}
         >

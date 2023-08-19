@@ -1,4 +1,18 @@
 {
+  "profile": [
+    {
+      "name": "민수민",
+      "phoneNumber": "01012345678",
+      "studentId": 2020103722,
+      "nickname": "민수민",
+      "role": "정회원",
+      "managerType": null,
+      "isPaid": true,
+      "email": "ddd@naver.com",
+      "profileImgURL": "",
+      "createDate": "2023/08/13"
+    }
+  ],
   "list": [
     {
       "id": 1,
