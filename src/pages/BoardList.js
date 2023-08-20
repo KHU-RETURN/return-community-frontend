@@ -11,7 +11,7 @@ import { styled } from "styled-components";
 
 function BoardList() {
   const navigate = useNavigate();
-  let [list, setList] = useState([]);
+  const [list, setList] = useState([]);
   const [userId, setUserId] = useState(0);
   const [page, setPage] = useState(1); //현재 페이지
   const limit = 10; // posts가 보일 최대한의 갯수

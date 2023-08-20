@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, useLocation } from "react-router";
 
 function Detail() {
-  let id = useParams();
+  const id = useParams();
   const contents = useLocation();
   let list = contents.state.list;
   const userId = contents.state.userId;
