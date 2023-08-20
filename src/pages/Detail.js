@@ -1,13 +1,25 @@
 import { useEffect, useState } from "react";
 import { useParams, useLocation } from "react-router";
+import "@toast-ui/editor/dist/toastui-editor-viewer.css";
+import { Viewer } from "@toast-ui/react-editor";
 
 function Detail() {
   const id = useParams();
   const contents = useLocation();
-  let list = contents.state.list;
+  const list = contents.state.list;
   const userId = contents.state.userId;
   const [editButton, setEditButton] = useState(false);
 
+  const title =
+    `# ` +
+    list.title +
+    `
+  ` +
+    `#### 작성자 : ` +
+    list.user.name +
+    `
+  `;
+  const test = list.content;
   //본인 글이면 삭제, 수정 버튼 나타남
   const showEditButton = () => {
     if (userId == list.user.userId) {
@@ -27,9 +39,9 @@ function Detail() {
 
   return (
     <div>
-      <h3>{list.title}</h3>
-      <div>{list.user.name}</div>
-      <div>{list.content}</div>
+      {/* <h3>{list.title}</h3>
+      <div>{list.user.name}</div> */}
+      <Viewer initialValue={title + test} />
       {editButton == true ? (
         <div>
           {" "}
