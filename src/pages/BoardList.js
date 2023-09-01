@@ -11,8 +11,8 @@ import { styled } from "styled-components";
 
 function BoardList() {
   const navigate = useNavigate();
-  const [list, setList] = useState([]);
   const [userId, setUserId] = useState(0);
+  const [list, setList] = useState([]);
   const [page, setPage] = useState(1); //현재 페이지
   const limit = 10; // posts가 보일 최대한의 갯수
   const offset = (page - 1) * limit; // 시작점과 끝점을 구하는 offset

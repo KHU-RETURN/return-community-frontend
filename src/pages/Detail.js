@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams, useLocation } from "react-router";
 import "@toast-ui/editor/dist/toastui-editor-viewer.css";
 import { Viewer } from "@toast-ui/react-editor";
@@ -9,6 +9,7 @@ function Detail() {
   const list = contents.state.list;
   const userId = contents.state.userId;
   const [editButton, setEditButton] = useState(false);
+  const editorRef = useRef();
 
   const title =
     `# ` +
