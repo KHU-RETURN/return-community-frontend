@@ -15,7 +15,7 @@ const PostEditor = ({editorRef}) => {
     <>
       <Editor
         ref={editorRef}
-        initialValue={''}
+        initialValue={' '}
         hideModeSwitch={true}
         toolbarItems={toolbarItems}
         height='50vh'

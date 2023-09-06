@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import styled from 'styled-components'
-import { deleteComment, editComment, getCommentList, postComment } from '../utils/axios';
+import { deleteComment, editComment, editRecomment, getCommentList, postComment, postRecomment } from '../utils/axios';
 import DateConverter from '../utils/DateConverter';
 import { ReactComponent as SendIcon } from "../assets/paper_plane.svg";
 import { ReactComponent as CloseIcon } from "../assets/close_gray.svg";
-
+import RecommentCountIndicator from '../components/diarydetail/RecommentCountIndicator';
 
 const DiaryDetail = () => {
   const location = useLocation();
@@ -15,6 +15,8 @@ const DiaryDetail = () => {
   const [commentData, setCommentData] = useState({"content" : "", "hashtagList" : []});
   const [editingCommentId, setEditingCommentId] = useState(null);
   const [editedComment, setEditedComment] = useState("");
+  const [extendingCommentId, setExtendingCommentId] = useState(null);
+  const [writingRecommentId, setWritingRecommentId] = useState();
   const INPUT_IS_EMPTY = commentData.content === ""
   const STATIC_URL = process.env.REACT_APP_API;
 
@@ -41,8 +43,27 @@ const DiaryDetail = () => {
     setEditedComment(initialComment);
   }
 
-  const handleSaveClick = (diaryId, commentId) => {
-    editComment(diaryId, commentId, editedComment);
+  const handleRecommentClick = (commentId) => {
+    extendingCommentId !== commentId ? setExtendingCommentId(commentId) : setExtendingCommentId(null);
+  }
+
+  const handleSaveClick = (diaryId, commentId, type) => {
+    switch (type){
+      default:
+        setEditingCommentId(null);
+        break;
+      case "editComment":
+        editComment(diaryId, commentId, editedComment);
+        break;
+      case "recomment":
+        postRecomment(diaryId, commentId, editedComment);
+        break;
+      case "editRecomment":
+        editRecomment(diaryId, commentId.commentId, commentId.recommentId, editedComment);
+        break;
+    }
+    setEditingCommentId(null);
+    setEditedComment("");
   }
 
   return (
@@ -50,23 +71,40 @@ const DiaryDetail = () => {
       diary-detail
       <PageBody>
         <DiaryHeader>
-          <Title>{diary.title}</Title>
-          <DateContainer>
-            <DateInfo>작성 일자 : {diary.createdDate.slice(0, -7)}</DateInfo>
-            <DateInfo>수정 일자 : {diary.modifiedDate.slice(0, -7)}</DateInfo>
-          </DateContainer>
+          <TitleLine>
+            <Title>{diary.title}</Title>
+            <DateContainer>
+              <DateInfo>작성 일자 : {diary.createdDate.slice(0, -7)}</DateInfo>
+              <DateInfo>수정 일자 : {diary.modifiedDate.slice(0, -7)}</DateInfo>
+            </DateContainer> 
+          </TitleLine>
+          <AuthorLine>
+            <AuthorInfoContaienr>
+              <AuthorProfileImg src={`${STATIC_URL + diary.member.profileImgURL}`}/>
+              <Author>{diary.member.name}</Author>
+            </AuthorInfoContaienr>
+            <EditDeleteConsole>
+              <EditButton>수정</EditButton>
+              <DeleteButton>삭제</DeleteButton>
+            </EditDeleteConsole>
+          </AuthorLine>
         </DiaryHeader>
         <DiaryBody>
           <DiaryContent>{diary.content}</DiaryContent>
-          <DiaryContent>{editingCommentId}</DiaryContent>
         </DiaryBody>
         <DiaryCommentContainer>
-          <CommentInputContainer>
-            <CommentInput className="input" type="text" value={commentData.content} onChange={handleInput}></CommentInput>
+          <CommentInputOutlay> 
+            <CommentInput 
+              className="input" 
+              type="text" 
+              value={commentData.content} 
+              onChange={handleInput}></CommentInput>
             <IconContainer>
-              <SendIcon className={INPUT_IS_EMPTY ? "deactivate" : "activate"} onClick={()=>handlePostComment(diary.diaryId, commentData)}/>
+              <SendIcon 
+                className={INPUT_IS_EMPTY ? "deactivate" : "activate"} 
+                onClick={()=>handlePostComment(diary.diaryId, commentData)}/>
             </IconContainer>
-          </CommentInputContainer>
+          </CommentInputOutlay>
           <CommentsContainer>
           <CommentCount>댓글 {commentList.length}</CommentCount>
           {!!commentList.length && commentList.map((comment) => 
@@ -74,26 +112,78 @@ const DiaryDetail = () => {
             {comment.commentId === editingCommentId ? (
               <CommentEditOutlay>
                 <CommentEditInput className="input" value={editedComment} onChange={handleEdit} />
-                <CloseIcon className="Icon close" width="18px" height="18px" fill="#313338" onClick={() => setEditingCommentId(null)}/>
-                <SendIcon className={editedComment === "" ? "deactivate Icon" : "activate Icon"} onClick={()=>handleSaveClick(diary.diaryId, comment.commentId)}/>
+                <CloseIcon 
+                  className="Icon close" width="18px" height="18px" fill="#313338" 
+                  onClick={() => setEditingCommentId(null)}/>
+                <SendIcon 
+                  className={editedComment === "" ? "deactivate Icon" : "activate Icon"} 
+                  onClick={()=>handleSaveClick(diary.diaryId, comment.commentId)}/>
               </CommentEditOutlay>
-              ) : ( 
-              <Comment>
-                <Header>
-                  <ProfileImg src={`${STATIC_URL + comment.user.profileImgURL}`}/>
-                  <Name>{comment.user.name}</Name>
-                  <WrittenTime>{DateConverter(comment.createdDate)}</WrittenTime>
-                </Header>
-                <Body>
-                  <Content>{comment.content}</Content>
-                  <InfoBox>
-                    <RecommendCount>👍 {comment.likeCount}</RecommendCount>
-                    <WriteButton>댓글작성</WriteButton>
-                  </InfoBox>
-                </Body>
-                <EditButton onClick={() => handleEditClick(comment.commentId, comment.content)}>수정</EditButton>
-                <DeleteButton onClick={() => deleteComment(diary.diaryId, comment.commentId)}>삭제</DeleteButton>
-              </Comment>
+              ) : (
+              <CommentOutlay>
+                <Comment> 
+                  <Header>
+                    <ProfileImg src={`${STATIC_URL + comment.user.profileImgURL}`}/>
+                    <Name>{comment.user.name}</Name>
+                    <WrittenTime>{DateConverter(comment.createdDate)}</WrittenTime>
+                  </Header>
+                  <Body>
+                    <Content>{comment.content}</Content>
+                    <InfoBox>
+                      <RecommendCount>👍 {comment.likeCount}</RecommendCount>
+                      <WriteButton onClick={()=>setWritingRecommentId(comment.commentId)}>댓글작성</WriteButton>
+                    </InfoBox>
+                  </Body>
+                  <EditCommentButton onClick={() => handleEditClick(comment.commentId, comment.content)}>수정</EditCommentButton>
+                  <DeleteCommentButton onClick={() => deleteComment(diary.diaryId, comment.commentId)}>삭제</DeleteCommentButton>
+                </Comment>
+                {writingRecommentId === comment.commentId && (
+                  <RecommentInputOutlay> 
+                    <RecommentInput className="input" value={editedComment} onChange={handleEdit} />
+                    <CloseIcon 
+                      className="Icon close" width="18px" height="18px" fill="#313338" 
+                      onClick={() => setWritingRecommentId(null)}/>
+                    <SendIcon 
+                      className={editedComment === "" ? "deactivate Icon" : "activate Icon"} 
+                      onClick={()=>handleSaveClick(diary.diaryId, comment.commentId, "recomment")}/>
+                  </RecommentInputOutlay>             
+                )}
+                {!!comment.recomments.length && (
+                  <RecommentCountIndicator 
+                    comment={comment}
+                    extendingCommentId={extendingCommentId}
+                    onClick={handleRecommentClick}
+                  />
+                )}
+                <RecommentList className={extendingCommentId !== comment.commentId && 'invisible'} > 
+                  {comment.recomments.map((recomment) => 
+                    (recomment.recommentId === editingCommentId ? (
+                      <CommentEditOutlay>
+                        <CommentEditInput className="input" value={editedComment} onChange={handleEdit} />
+                        <CloseIcon 
+                          className="Icon close" width="18px" height="18px" fill="#313338" 
+                          onClick={() => setEditingCommentId(null)}/>
+                        <SendIcon 
+                          className={editedComment === "" ? "deactivate Icon" : "activate Icon"} 
+                          onClick={()=>handleSaveClick(diary.diaryId, {commentId: comment.commentId, recommentId: recomment.recommentId}, "editRecomment")}/>
+                      </CommentEditOutlay>
+                    ) : (
+                      <Recomment>
+                        <Header>
+                          <ProfileImg src={`${STATIC_URL + recomment.user.profileImgURL}`}/>
+                          <Name>{recomment.user.name}</Name>
+                          <WrittenTime>{DateConverter(recomment.createdDate)}</WrittenTime>
+                        </Header>
+                        <Body>
+                          <Content>{recomment.content}</Content>
+                        </Body>
+                        <EditCommentButton onClick={() => handleEditClick(recomment.recommentId, recomment.content)}>수정</EditCommentButton>
+                        <DeleteCommentButton onClick={() => deleteComment(diary.diaryId, recomment.recommentId)}>삭제</DeleteCommentButton>
+                      </Recomment>
+                    ))
+                  )}
+                </RecommentList>
+              </CommentOutlay>
             )}
           </div>
           )}
@@ -116,10 +206,53 @@ const PageBody = styled.div`
 
 const DiaryHeader = styled.div`
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
   width: 886px;
   border-bottom: 1px solid;
   font-size: 1.5rem;
+`;
+
+const TitleLine = styled.div`
+  display: flex;
+  justify-content: space-between;
+`;
+
+const AuthorLine = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+const AuthorInfoContaienr = styled.div`
+  display: flex;
+  justify-contetn: center;
+  align-items: center;
+`;
+
+const AuthorProfileImg = styled.img`
+  width: 20px;
+  height: 20px;
+  margin-right: 5px;
+  border-radius: 100px;
+`;
+
+const Author = styled.div`
+  font-size: 1rem;
+`;
+
+const EditDeleteConsole = styled.div`
+  display: flex;
+  justify-contetn: center;
+  align-items: center;
+  font-size: .9rem;
+`;
+
+const EditButton = styled.div`
+  padding: 6px;
+  cursor: pointer;
+`;
+
+const DeleteButton = styled(EditButton)`
 `;
 
 const DateContainer = styled.div``;
@@ -148,7 +281,7 @@ const DiaryCommentContainer = styled.div`
   align-items: center;
 `;
 
-const CommentInputContainer = styled.div`
+const CommentInputOutlay = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -187,6 +320,10 @@ const IconContainer = styled.div`
     fill: #313338;
     cursor: pointer;
   }
+  .open {
+    transform: rotate(180deg);
+    transition: .5s;
+  }
 `;
 
 const CommentsContainer = styled.div`
@@ -222,6 +359,12 @@ const CommentEditOutlay = styled.div`
   .input::-webkit-scrollbar {
     display: none;
 }
+`;
+
+const CommentOutlay = styled.div`
+  .invisible {
+  display: none;
+  }
 `;
 
 const Comment = styled.div`
@@ -294,16 +437,26 @@ const WriteButton = styled(Content)`
   cursor: pointer;
 `;
 
-const EditButton = styled.div`
+const EditCommentButton = styled.div`
   position: absolute;
   right: 50px;
   top: 0px;
   cursor: pointer;
 `;
 
-const DeleteButton = styled.div`
+const DeleteCommentButton = styled.div`
   position: absolute;
   right: 10px;
   top: 0px;
   cursor: pointer;
 `;
+
+const RecommentInputOutlay = styled(CommentEditOutlay)``;
+
+const RecommentInput = styled(CommentEditInput)``;
+
+const RecommentList = styled.div`
+  margin-left: 20px;
+`;
+
+const Recomment = styled(Comment)``;

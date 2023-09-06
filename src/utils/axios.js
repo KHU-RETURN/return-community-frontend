@@ -148,3 +148,53 @@ export const deleteComment = (postId, commentId) => {
     console.log(error);
   });
 }
+
+export const postRecomment = (postId, commentId, content) => {
+  let data = JSON.stringify({
+  "content": `${content}`
+  });
+
+let config = {
+  method: 'post',
+  maxBodyLength: Infinity,
+  url: API_URL + `/diary/${postId}/comment/${commentId}/recomment`,
+  headers: { 
+    'Content-Type': 'application/json', 
+    'Authorization': `Bearer ${authorizationCode}`,
+  },
+  data : data
+};
+
+axios.request(config)
+.then((response) => {
+  alert("댓글이 작성되었습니다.")
+  window.location.reload();
+})
+.catch((error) => {
+  console.log(error);
+});
+}
+
+export const editRecomment = (postId, commentId, recommentId, content) => {
+  let data = JSON.stringify({
+    "content": `${content}`
+    });
+  let config = {
+    method: 'patch',
+    maxBodyLength: Infinity,
+    url: API_URL + `/diary/${postId}/comment/${commentId}/recomment/${recommentId}`,
+    headers: { 
+      'Content-Type': 'application/json', 
+      'Authorization': `Bearer ${authorizationCode}`,
+    },
+    data : data,
+  };
+  axios.request(config)
+  .then(() => {
+    alert("댓글이 수정되었습니다.")
+    window.location.reload();
+  })
+  .catch((error) => {
+    console.log(error);
+  });
+}
