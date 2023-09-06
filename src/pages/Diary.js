@@ -75,18 +75,18 @@ const Diary = () => {
           <DiaryListContainer>
             <PageSizeRegulator>
               페이지 당 게시물 개수
-              <RegulatorButton type="radio" id="1" name="pageSize" value="1" classname={pageSize === 1 ? "selected" : "non-selected"} onChange={()=>setPageSize(1)}/>
-              <label for="1">1</label>
-              <RegulatorButton type="radio" id="5" name="pageSize" value="5" classname={pageSize === 5 ? "selected" : "non-selected"} onChange={()=>setPageSize(5)}/>
-              <label for="5">5</label>
-              <RegulatorButton type="radio" id="10" name="pageSize" value="10" classname={pageSize === 10 ? "selected" : "non-selected"} onChange={()=>setPageSize(10)}/>
-              <label for="10">10</label>
+              <RegulatorButton type="radio" id="1" name="pageSize" value="1" className={pageSize === 1 ? "selected" : "non-selected"} onChange={()=>setPageSize(1)}/>
+              <label htmlFor="1">1</label>
+              <RegulatorButton type="radio" id="5" name="pageSize" value="5" className={pageSize === 5 ? "selected" : "non-selected"} onChange={()=>setPageSize(5)}/>
+              <label htmlFor="5">5</label>
+              <RegulatorButton type="radio" id="10" name="pageSize" value="10" className={pageSize === 10 ? "selected" : "non-selected"} onChange={()=>setPageSize(10)}/>
+              <label htmlFor="10">10</label>
             </PageSizeRegulator>
             {searchedList ? (searchedList.map((diary) => (
-              <DiaryBlock onClick={() => {getDiaryDetail(diary.diaryId, navigate)}}>
+              <DiaryBlock key={diary.id} onClick={() => {getDiaryDetail(diary.diaryId, navigate)}}>
                 <DiaryHeader>
                   <ThumbnailBox>
-                    <ThumbnailImg src={`${STATIC_URL + diary.profileImgURL}`} alt="Thumbnail"/>
+                    {diary.thumbnailImgURL ? <ThumbnailImg src={`${STATIC_URL + diary.thumbnailImgURL}`} alt="Thumbnail"/> : <EmptyThumbnailImg alt="EmptyThumbnail" />}
                   </ThumbnailBox>
                   <Title>{diary.title}</Title>
                 </DiaryHeader>
@@ -186,6 +186,12 @@ const ThumbnailImg = styled.img`
   width: 64px;
   height: 64px;
   object-fit: cover;
+`;
+
+const EmptyThumbnailImg = styled.div`
+  width: 64px;
+  height: 64px;
+  background: #f1f1f1
 `;
 
 const AuthorBlock = styled.div`
