@@ -14,7 +14,7 @@ const WritePostModal = ({ setIsModalOpen, name}) => {
     document.body.style.overflow = "unset";
     setIsModalOpen(false);
   };
-  const handleSubmit = async () => {
+  const handleSubmit = () => {
     try{
       const editorlns = ref?.current?.getInstance();
       const content = editorlns.getHTML();
@@ -22,14 +22,13 @@ const WritePostModal = ({ setIsModalOpen, name}) => {
         "title" : title,
         "content" : content,
         "isAnonymous" : true,
-        "eventDate" : "2023-07-30 19:36:23",
         "thumbnailIndex": 0, 
       }
     if (content === POST_IS_EMPTY) {
       alert('내용을 입력해주세요');
       return
     }
-    await uploadPost(postData);
+    uploadPost(postData);
   } catch (e) {
     console.log(e);
     alert('다시 시도해주세요');

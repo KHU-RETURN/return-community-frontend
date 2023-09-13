@@ -26,7 +26,8 @@ export const getDiaryList = (page, sort, setDiaryList) => {
 
 export const uploadPost = (postData) => {
   let data = new FormData();
-  data.append(postData);
+  data.append('data', JSON.stringify(postData));
+  data.append('mediaList', null);
   let config = {
     method: 'post',
     maxBodyLength: Infinity,
@@ -35,12 +36,31 @@ export const uploadPost = (postData) => {
       'Content-Type': 'multipart/form-data',
       'Authorization': `Bearer ${authorizationCode}`, 
     },
-    data : data
+    data :data
   };
 
   axios.request(config)
   .then((response) => {
     console.log(JSON.stringify(response.data));
+  })
+  .catch((error) => {
+    console.log(error);
+  });
+}
+
+export const deletePost = (postId) => {
+  let config = {
+    method: 'delete',
+    maxBodyLength: Infinity,
+    url: API_URL + `/diary/${postId}`,
+    headers: { 
+      'Authorization': `Bearer ${authorizationCode}`,
+    }
+  };
+  axios.request(config)
+  .then(() => {
+    alert("게시글이 삭제되었습니다.")
+    window.location.href="/diary"
   })
   .catch((error) => {
     console.log(error);
