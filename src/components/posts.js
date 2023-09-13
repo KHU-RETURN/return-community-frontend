@@ -18,10 +18,10 @@ function Posts({ info, userId }) {
           }}
           key={id}
         >
-          <td>{list.id}</td>
-          <td>{list.title}</td>
-          <td>{list.user.name}</td>
-          <td>{list.createdDate}</td>
+          <Post>{list.id}</Post>
+          <Post>{list.title}</Post>
+          <Post>{list.user.name}</Post>
+          <Post>{list.createdDate}</Post>
         </LinkToDetail>
       );
     })
@@ -34,4 +34,12 @@ export default Posts;
 
 const LinkToDetail = styled.tr`
   cursor: pointer;
+  &:hover {
+    background-color: #e9e9e9;
+  }
+`;
+
+const Post = styled.td`
+  height: 25px;
+  padding: 5px;
 `;

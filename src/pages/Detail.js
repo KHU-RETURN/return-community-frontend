@@ -40,8 +40,6 @@ function Detail() {
 
   return (
     <div>
-      {/* <h3>{list.title}</h3>
-      <div>{list.user.name}</div> */}
       <Viewer initialValue={title + test} />
       {editButton == true ? (
         <div>

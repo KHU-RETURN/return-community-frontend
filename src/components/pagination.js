@@ -1,3 +1,5 @@
+import styled from "styled-components";
+
 function Pagination({ postsPerPage, totalPosts, page, setPage }) {
   const pageNum = [];
   const numPage = Math.ceil(totalPosts / postsPerPage); //총 페이지 개수
@@ -8,16 +10,18 @@ function Pagination({ postsPerPage, totalPosts, page, setPage }) {
 
   return pageNum.map((a, i) => {
     return (
-      <button
+      <PageButton
         key={i + 1}
         onClick={() => {
           setPage(i + 1);
         }}
       >
         {i + 1}
-      </button>
+      </PageButton>
     );
   });
 }
 
 export default Pagination;
+
+const PageButton = styled.button``;

@@ -68,25 +68,29 @@ function BoardList() {
       >
         작성하기
       </button>
-      <List>
-        <thead>
-          <tr>
-            <Post>글번호</Post>
-            <PostTitle>제목</PostTitle>
-            <Post>작성자</Post>
-            <Post>등록일</Post>
-          </tr>
-        </thead>
-        <tbody>
-          <Posts info={postsData(list)} userId={userId} />
-        </tbody>
-      </List>
-      <Pagination
-        postsPerPage={limit}
-        page={page}
-        setPage={setPage}
-        totalPosts={list.length}
-      />
+      <TableBox>
+        <List>
+          <thead>
+            <PostBox>
+              <Post>글번호</Post>
+              <PostTitle>제목</PostTitle>
+              <Post>작성자</Post>
+              <Post>등록일</Post>
+            </PostBox>
+          </thead>
+          <tbody>
+            <Posts info={postsData(list)} userId={userId} />
+          </tbody>
+        </List>
+      </TableBox>
+      <PageButton>
+        <Pagination
+          postsPerPage={limit}
+          page={page}
+          setPage={setPage}
+          totalPosts={list.length}
+        />
+      </PageButton>
     </Body>
   );
 }
@@ -96,26 +100,49 @@ export default BoardList;
 const Body = styled.div`
   font-family: "Nanum Gothic", sans-serif;
   margin-left: 100px;
+  margin-right: 100px;
 `;
 const Title = styled.h1`
   width: inherit;
-  height: 85px;
-  padding-left: 20px;
-  line-height: 85px;
-  margin: 0;
+  height: 55px;
+  padding-left: 30px;
+  line-height: 1.5;
+  margin: 30px 0 20px 0;
   text-align: left;
-  color: black;
+  color: white;
+  border-radius: 30px;
+  background-color: #b2ebf4;
 `;
 
 const List = styled.table`
-  height: 400px;
   text-align: center;
+  border-top: 1px solid #444444;
+  border-collapse: collapse;
+  width: 100%;
 `;
 
 const Post = styled.th`
   width: 120px;
+  border-bottom: 1px solid #444444;
+  padding: 10px;
 `;
 
 const PostTitle = styled.th`
-  width: 300px;
+  width: 600px;
+  border-bottom: 1px solid #444444;
+  padding: 10px;
+`;
+
+const PostBox = styled.tr`
+  border-collapse: collapse;
+  border-bottom: 1px solid #444444;
+  padding: 10px;
+`;
+
+const TableBox = styled.div`
+  height: 400px;
+`;
+
+const PageButton = styled.div`
+  text-align: center;
 `;

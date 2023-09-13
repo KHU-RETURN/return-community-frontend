@@ -4,8 +4,7 @@ import "tui-color-picker/dist/tui-color-picker.css";
 import "@toast-ui/editor-plugin-color-syntax/dist/toastui-editor-plugin-color-syntax.css";
 import colorSyntax from "@toast-ui/editor-plugin-color-syntax";
 import "@toast-ui/editor/dist/i18n/ko-kr";
-import { useRef, useState } from "react";
-import { useFetcher } from "react-router-dom";
+import { useRef } from "react";
 import { styled } from "styled-components";
 import { useNavigate } from "react-router-dom";
 
@@ -58,7 +57,16 @@ export default function TostEditor({ setContent }) {
         >
           등록
         </button>
-        <button>취소</button>
+        <button
+          onClick={() => {
+            if (window.confirm("글이 삭제됩니다. 취소하시겠습니까?")) {
+              alert("취소되었습니다");
+              navigate("/");
+            }
+          }}
+        >
+          취소
+        </button>
       </ButtonBox>
     </div>
   );
