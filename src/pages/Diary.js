@@ -3,14 +3,10 @@ import styled from 'styled-components'
 import { ReactComponent as WriteIcon } from "../assets/pen.svg"
 import PaginationBar from '../components/diary/PaginationBar'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { getDiaryDetail, getDiaryList } from '../utils/axios'
+import { bookmarkPost, getDiaryDetail, getDiaryList } from '../utils/axios'
 import WritePostModal from '../components/diary/WritePostModal'
 import SearchBar from '../components/SearchBar'
-
-/**
- * To do
- * 1. PageSizeRegulator, DiaryBlock 컴포넌트 분리, 추상화 요망   
- */
+import { ReactComponent as BookmarkIcon } from "../assets/flag.svg";
 
 const Diary = () => {
   const currentURL = useLocation().search
@@ -19,7 +15,7 @@ const Diary = () => {
   const [diaryList, setDiaryList] = useState([])
 
   const [currentPage, setcurrentPage] = useState(1)
-  const [pageSize, setPageSize] = useState(3)
+  const [pageSize, setPageSize] = useState(5)
   const [numberOfPages, setNumberOfPages] = useState()
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchContent, setsearchContent] = useState('')
@@ -35,11 +31,6 @@ const Diary = () => {
   const handleSearch = (e) => {
     const newValue = e.currentTarget.value;
     setsearchContent(newValue);
-  }
-
-  const handlePostClick = async (post) => {
-    const postDetail = await getDiaryDetail(post.postId);
-    
   }
 
   useEffect(() => {
@@ -75,22 +66,22 @@ const Diary = () => {
           <DiaryListContainer>
             <PageSizeRegulator>
               페이지 당 게시물 개수
-              <RegulatorButton type="radio" id="1" name="pageSize" value="1" className={pageSize === 1 ? "selected" : "non-selected"} onChange={()=>setPageSize(1)}/>
+              <RegulatorButton type="radio" id="1" name="pageSize" value="1" onChange={()=>setPageSize(1)}/>
               <label htmlFor="1">1</label>
-              <RegulatorButton type="radio" id="5" name="pageSize" value="5" className={pageSize === 5 ? "selected" : "non-selected"} onChange={()=>setPageSize(5)}/>
+              <RegulatorButton type="radio" id="5" name="pageSize" value="5" onChange={()=>setPageSize(5)} checked/>
               <label htmlFor="5">5</label>
-              <RegulatorButton type="radio" id="10" name="pageSize" value="10" className={pageSize === 10 ? "selected" : "non-selected"} onChange={()=>setPageSize(10)}/>
+              <RegulatorButton type="radio" id="10" name="pageSize" value="10" onChange={()=>setPageSize(10)}/>
               <label htmlFor="10">10</label>
             </PageSizeRegulator>
             {searchedList ? (searchedList.map((diary) => (
-              <DiaryBlock key={diary.id} onClick={() => {getDiaryDetail(diary.diaryId, navigate)}}>
-                <DiaryHeader>
+              <DiaryBlock key={diary.id}>
+                <DiaryHeader onClick={() => {getDiaryDetail(diary.diaryId, navigate)}}>
                   <ThumbnailBox>
                     {diary.thumbnailImgURL ? <ThumbnailImg src={`${STATIC_URL + diary.thumbnailImgURL}`} alt="Thumbnail"/> : <EmptyThumbnailImg alt="EmptyThumbnail" />}
                   </ThumbnailBox>
                   <Title>{diary.title}</Title>
                 </DiaryHeader>
-                <DiaryBody>
+                <DiaryBody onClick={() => {getDiaryDetail(diary.diaryId, navigate)}}>
                   <AuthorBlock>
                     <AuthorProfileImg src={`${STATIC_URL + diary.member.profileImgURL}`} />
                     <Author>{diary.member.name}</Author>
@@ -101,6 +92,10 @@ const Diary = () => {
                     <CommentCount>댓글 {diary.commentCount}</CommentCount>
                   </DiaryInfoBlock>
                 </DiaryBody>
+                <BookmarkIcon
+                    onClick={() => bookmarkPost(diary.diaryId)}
+                    className={diary.isBookmarked ? "Bookmarked Icon" : "Icon"}
+                />
               </DiaryBlock>
             ))): "Loading"}
           </DiaryListContainer>
@@ -125,8 +120,10 @@ const PageBody = styled.div`
   display: flex;
   flex-direction: column;
   width: 100vw;
+  height: 100vh;
   align-items: center;
   justify-content: center;
+  background: #fafafa;
 `;
 
 const WritePostButton = styled.div`
@@ -160,7 +157,21 @@ const RegulatorButton = styled.input``;
 const DiaryBlock = styled.div`
   width: 800px;
   margin: auto;
-  border : 1px solid
+  border-radius: 5px;
+  border: 1px solid #8b8b8b;
+  background: #ffffff;
+  position: relative;
+  margin-bottom: 20px;
+  .Icon {
+    position: absolute;
+    top: -5px;
+    right: 10px;
+    z-index: 0;
+    fill: #9b9b9b;
+  }
+  .Bookmarked {
+    fill: #7054ff;
+  }
 `;
 
 const DiaryHeader = styled.div`

@@ -218,3 +218,23 @@ export const editRecomment = (postId, commentId, recommentId, content) => {
     console.log(error);
   });
 }
+
+export const bookmarkPost = async (postId) => {
+  let config = {
+  method: 'post',
+  maxBodyLength: Infinity,
+  url: API_URL + `/diary/${postId}/bookmark`,
+  headers: { 
+    'Content-Type': 'application/json', 
+    'Authorization': `Bearer ${authorizationCode}`,
+  },
+};
+
+axios.request(config)
+.then((response) => {
+  window.location.reload();
+})
+.catch((error) => {
+  console.log(error);
+});
+}
