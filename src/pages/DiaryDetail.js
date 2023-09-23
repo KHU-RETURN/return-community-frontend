@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import styled from 'styled-components'
-import { deleteComment, editComment, editRecomment, getCommentList, postComment, postRecomment } from '../utils/axios';
+import { deleteComment, deletePost, editComment, editRecomment, getCommentList, postComment, postRecomment } from '../utils/axios';
 import DateConverter from '../utils/DateConverter';
 import { ReactComponent as SendIcon } from "../assets/paper_plane.svg";
 import { ReactComponent as CloseIcon } from "../assets/close_gray.svg";
 import RecommentCountIndicator from '../components/diarydetail/RecommentCountIndicator';
+import WritePostModal from '../components/diary/WritePostModal';
 
 const DiaryDetail = () => {
   const location = useLocation();
@@ -17,6 +18,7 @@ const DiaryDetail = () => {
   const [editedComment, setEditedComment] = useState("");
   const [extendingCommentId, setExtendingCommentId] = useState(null);
   const [writingRecommentId, setWritingRecommentId] = useState();
+  const [isEditingPost, setIsEditingPost] = useState(false);
   const INPUT_IS_EMPTY = commentData.content === ""
   const STATIC_URL = process.env.REACT_APP_API;
 
@@ -84,8 +86,8 @@ const DiaryDetail = () => {
               <Author>{diary.member.name}</Author>
             </AuthorInfoContaienr>
             <EditDeleteConsole>
-              <EditButton>수정</EditButton>
-              <DeleteButton>삭제</DeleteButton>
+              <EditButton onClick={()=>setIsEditingPost(true)}>수정</EditButton>
+              <DeleteButton onClick={()=>deletePost(diary.diaryId)}>삭제</DeleteButton>
             </EditDeleteConsole>
           </AuthorLine>
         </DiaryHeader>
@@ -190,6 +192,7 @@ const DiaryDetail = () => {
         </CommentsContainer>
         </DiaryCommentContainer>
       </PageBody>
+      {isEditingPost && <WritePostModal setIsModalOpen={setIsEditingPost}/>}
     </>
   )
 }
