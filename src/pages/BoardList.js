@@ -21,6 +21,10 @@ function BoardList() {
     navigate("/writing");
   };
 
+  const moveToMakeGroup = () => {
+    navigate("/makeGroup");
+  };
+
   const postsData = (posts) => {
     if (posts) {
       let postResult = posts.slice(offset, offset + limit);
@@ -69,7 +73,13 @@ function BoardList() {
         >
           글쓰기
         </Writing>
-        <Group>그룹 만들기</Group>
+        <Group
+          onClick={() => {
+            moveToMakeGroup();
+          }}
+        >
+          그룹 만들기
+        </Group>
         <Search class="search__input" type="text" placeholder="Search"></Search>
       </Category>
       <TableBox>
