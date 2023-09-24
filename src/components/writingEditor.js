@@ -6,11 +6,28 @@ import colorSyntax from "@toast-ui/editor-plugin-color-syntax";
 import "@toast-ui/editor/dist/i18n/ko-kr";
 import { useRef } from "react";
 import { styled } from "styled-components";
+import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 export default function TostEditor({ setContent }) {
   const editorRef = useRef();
   const navigate = useNavigate();
+  const uploadPost = (content) => {
+    axios.post("http://localhost:3001/list", {
+      id: 12,
+      title: "new 게시물",
+      content: content,
+      likeCount: 0,
+      commentCount: 0,
+      user: {
+        userId: 2020103722,
+        profileImgURL: "",
+        name: "민수민",
+      },
+      createdDate: "2023/09/13",
+      isMyPost: true,
+    });
+  };
 
   // 에디터의 내용을 가져오는 함수
   const handleGetContent = () => {
@@ -19,6 +36,7 @@ export default function TostEditor({ setContent }) {
       const content = editorInstance.getMarkdown(); // Markdown 형식의 내용을 가져옴
       setContent(content);
       console.log("success");
+      uploadPost(content);
       alert("등록에 성공했습니다");
       navigate("/");
     } else {

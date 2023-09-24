@@ -167,6 +167,20 @@
       },
       "createdDate": "2023/08/16",
       "isMyPost": true
+    },
+    {
+      "id": 12,
+      "title": "new 게시물",
+      "content": "# 안녕\\~",
+      "likeCount": 0,
+      "commentCount": 0,
+      "user": {
+        "userId": 2020103722,
+        "profileImgURL": "",
+        "name": "민수민"
+      },
+      "createdDate": "2023/09/13",
+      "isMyPost": true
     }
   ]
 }

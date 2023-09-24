@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useParams, useLocation } from "react-router";
 import "@toast-ui/editor/dist/toastui-editor-viewer.css";
 import { Viewer } from "@toast-ui/react-editor";
+import styled from "styled-components";
 
 function Detail() {
   const id = useParams();
@@ -39,7 +40,7 @@ function Detail() {
   }, []);
 
   return (
-    <div>
+    <Body>
       <Viewer initialValue={title + test} />
       {editButton == true ? (
         <div>
@@ -48,8 +49,12 @@ function Detail() {
           <button>삭제</button>{" "}
         </div>
       ) : null}
-    </div>
+    </Body>
   );
 }
 
 export default Detail;
+
+const Body = styled.div`
+  margin: 30px 50px 0px 50px;
+`;

@@ -40,6 +40,6 @@ const LinkToDetail = styled.tr`
 `;
 
 const Post = styled.td`
-  height: 25px;
+  height: 35px;
   padding: 5px;
 `;
