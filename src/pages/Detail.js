@@ -3,14 +3,16 @@ import { useParams, useLocation } from "react-router";
 import "@toast-ui/editor/dist/toastui-editor-viewer.css";
 import { Viewer } from "@toast-ui/react-editor";
 import styled from "styled-components";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 function Detail() {
+  const navigate = useNavigate();
   const id = useParams();
   const contents = useLocation();
   const list = contents.state.list;
   const userId = contents.state.userId;
   const [editButton, setEditButton] = useState(false);
-  const editorRef = useRef();
 
   const title =
     `# ` +
@@ -29,10 +31,20 @@ function Detail() {
     }
   };
 
-  const editPost = (button) => {
-    if (button == "수정") {
-    } else if (button == "삭제") {
-    }
+  const editPost = () => {
+    navigate("/writing", { state: list });
+  };
+
+  const deletePost = () => {
+    axios
+      .delete(`http://localhost:3001/list/` + id.id)
+      .then((res) => {
+        console.log(res);
+        navigate("/board");
+      })
+      .catch(console.log("error"));
+    // console.log(id.id);
+    // console.log(`http://localhost:3001/list/` + id.id);
   };
 
   useEffect(() => {
@@ -45,8 +57,20 @@ function Detail() {
       {editButton == true ? (
         <div>
           {" "}
-          <button>수정</button>
-          <button>삭제</button>{" "}
+          <button
+            onClick={() => {
+              editPost();
+            }}
+          >
+            수정
+          </button>
+          <button
+            onClick={() => {
+              deletePost();
+            }}
+          >
+            삭제
+          </button>{" "}
         </div>
       ) : null}
     </Body>

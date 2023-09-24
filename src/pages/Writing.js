@@ -4,23 +4,33 @@ import axios from "axios";
 import ToastEditor from "../components/writingEditor";
 import { Viewer } from "@toast-ui/react-editor";
 import React, { useEffect, useRef, useState } from "react";
+import { useLocation } from "react-router-dom";
+<style>
+  @import
+  url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@500&display=swap');
+</style>;
 
 export default function Writing() {
+  //const lastId = useLocation();
+  //const list = useLocation();
+  const data = useLocation();
+  const lastId = data.state.id == undefined ? data.state : data.state.id;
   const navigate = useNavigate();
-  const [content, setContent] = useState("");
-
+  const [content, setContent] = useState(" ");
   const saveWriting = async () => {
     await axios.post("http://localhost:3001");
   };
 
-  const backToList = () => {
-    navigate("/");
-  };
+  useEffect(() => {
+    if (data.state.content != undefined) {
+      setContent(data.state.content);
+    }
+  });
 
   return (
     <WritingBox>
       <Title>Writing</Title>
-      <ToastEditor setContent={setContent} />
+      <ToastEditor lastId={lastId} content={content} setContent={setContent} />
     </WritingBox>
   );
 }

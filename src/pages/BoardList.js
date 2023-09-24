@@ -13,12 +13,13 @@ function BoardList() {
   const navigate = useNavigate();
   const [userId, setUserId] = useState(0);
   const [list, setList] = useState([]);
+  const [lastId, setLastId] = useState(0);
   const [page, setPage] = useState(1); //현재 페이지
   const limit = 5; // posts가 보일 최대한의 갯수
   const offset = (page - 1) * limit; // 시작점과 끝점을 구하는 offset
 
-  const moveToWriting = () => {
-    navigate("/writing");
+  const moveToWriting = (lastId) => {
+    navigate("/writing", { state: lastId });
   };
 
   const moveToMakeGroup = () => {
@@ -37,12 +38,15 @@ function BoardList() {
     axios
       .get("http://localhost:3001/list")
       .then((res) => {
-        const result = [...res.data];
+        const result = [...res.data].reverse();
         console.log(result);
-        setList(result.reverse());
+        console.log(result[0].id);
+        setList(result);
+        setLastId(result[0].id);
       })
       .catch(() => {
         console.log("get list error");
+        console.log(list);
       });
   }
 
@@ -60,6 +64,7 @@ function BoardList() {
   useEffect(() => {
     getUserProfile();
     getBoardList();
+    console.log("렌더링 이후 lastid" + lastId);
   }, []);
 
   return (
@@ -68,7 +73,7 @@ function BoardList() {
       <Category>
         <Writing
           onClick={() => {
-            moveToWriting();
+            moveToWriting(lastId);
           }}
         >
           글쓰기
@@ -80,7 +85,7 @@ function BoardList() {
         >
           그룹 만들기
         </Group>
-        <Search class="search__input" type="text" placeholder="Search"></Search>
+        <Search type="text" placeholder="Search"></Search>
       </Category>
       <TableBox>
         <List>

@@ -1,6 +1,12 @@
 import styled from "styled-components";
-
+import { Navigate, useNavigate } from "react-router-dom";
+<style>
+  @import
+  url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@500&display=swap');
+</style>;
 export default function MakeGroup() {
+  const navigate = useNavigate();
+
   return (
     <div>
       <Title>Make Group</Title>
@@ -23,7 +29,13 @@ export default function MakeGroup() {
         <h3>그룹 설명</h3>
         <textarea></textarea>
         <div>
-          <button>돌아가기</button>
+          <button
+            onClick={() => {
+              navigate("/board");
+            }}
+          >
+            돌아가기
+          </button>
           <button>등록하기</button>
         </div>
       </div>
