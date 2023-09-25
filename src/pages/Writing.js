@@ -13,24 +13,55 @@ import { useLocation } from "react-router-dom";
 export default function Writing() {
   //const lastId = useLocation();
   //const list = useLocation();
-  const data = useLocation();
-  const lastId = data.state.id == undefined ? data.state : data.state.id;
-  const navigate = useNavigate();
+  const [edit, setEdit] = useState(false);
   const [content, setContent] = useState(" ");
-  const saveWriting = async () => {
-    await axios.post("http://localhost:3001");
+  const [title, setTitle] = useState("");
+  const data = useLocation();
+  const navigate = useNavigate();
+  const lastId = edit == false ? data.state : data.state.id;
+
+  //수정인지, 처음쓰는 글인지 확인
+  const checkEdit = () => {
+    if (data.state.id != undefined) {
+      setEdit(true);
+      console.log(edit);
+    }
+    if (edit == true) {
+      setContent(data.state.content);
+      setTitle(data.state.title);
+    }
   };
 
   useEffect(() => {
-    if (data.state.content != undefined) {
-      setContent(data.state.content);
-    }
+    checkEdit();
   });
 
   return (
     <WritingBox>
       <Title>Writing</Title>
-      <ToastEditor lastId={lastId} content={content} setContent={setContent} />
+      {edit == true ? (
+        title && (
+          <ToastEditor
+            createdDate={data.state.createdDate}
+            id={data.state.id}
+            title={title}
+            setTitle={setTitle}
+            edit={edit}
+            lastId={lastId}
+            content={content}
+            setContent={setContent}
+          />
+        )
+      ) : (
+        <ToastEditor
+          title={title}
+          setTitle={setTitle}
+          edit={edit}
+          lastId={lastId}
+          content={content}
+          setContent={setContent}
+        />
+      )}
     </WritingBox>
   );
 }

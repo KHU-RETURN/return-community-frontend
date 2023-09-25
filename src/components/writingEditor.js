@@ -13,14 +13,36 @@ import { useNavigate } from "react-router-dom";
   url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@500&display=swap');
 </style>;
 
-export default function TostEditor({ setContent, lastId }) {
+export default function TostEditor({
+  createdDate,
+  id,
+  title,
+  setTitle,
+  edit,
+  content,
+  setContent,
+  lastId,
+}) {
   const editorRef = useRef();
   const navigate = useNavigate();
-  const [title, setTitle] = useState("");
+  const titleRef = useRef();
+
+  //제목 가져오기
   const saveTitle = (e) => {
     setTitle(e.target.value);
     console.log(title);
   };
+
+  //현재 날짜 가져오기
+  const getToday = () => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = now.getMonth() + 1;
+    const date = now.getDate();
+    return year + "/" + month + "/" + date;
+  };
+
+  //포스트 업로드 or 수정
   const uploadPost = (title, content) => {
     if (title == "") {
       console.log("제목이 널값");
@@ -32,56 +54,86 @@ export default function TostEditor({ setContent, lastId }) {
       console.log("내용이 널값");
       return false;
     }
-    axios
-      .post("http://localhost:3001/list", {
-        id: lastId.state + 1,
-        title: title,
-        content: content,
-        likeCount: 0,
-        commentCount: 0,
-        user: {
-          userId: 2020103722,
-          profileImgURL: "",
-          name: "민수민",
-        },
-        createdDate: "2023/09/13",
-        isMyPost: true,
-      })
-      .then((res) => {
-        alert("등록에 성공했습니다");
-        navigate("/board");
-      })
-      .catch((error) => {
-        alert("등록에 실패했습니다");
-      });
+    if (edit == false) {
+      const date = getToday();
+      axios
+        .post("http://localhost:3001/list", {
+          id: lastId.state + 1,
+          title: title,
+          content: content,
+          likeCount: 0,
+          commentCount: 0,
+          user: {
+            userId: 2020103722,
+            profileImgURL: "",
+            name: "민수민",
+          },
+          createdDate: date,
+          isMyPost: true,
+        })
+        .then((res) => {
+          alert("등록에 성공했습니다");
+          navigate("/board");
+        })
+        .catch((error) => {
+          alert("등록에 실패했습니다");
+        });
+    } else {
+      //axios.put
+      console.log("수정하는 포스트");
+      axios
+        .put("http://localhost:3001/list/" + id, {
+          title: title,
+          content: content,
+          likeCount: 0,
+          commentCount: 0,
+          user: {
+            userId: 2020103722,
+            profileImgURL: "",
+            name: "민수민",
+          },
+          createdDate: createdDate,
+          isMyPost: true,
+        })
+        .then((res) => {
+          alert("수정에 성공했습니다");
+          navigate("/board");
+        })
+        .catch((error) => {
+          alert("수정에 실패했습니다");
+        });
+    }
   };
 
   // 에디터의 내용을 가져오는 함수
   const handleGetContent = () => {
-    if (editorRef.current) {
+    if (editorRef.current && titleRef.current) {
       const editorInstance = editorRef.current.getInstance();
       const content = editorInstance.getMarkdown(); // Markdown 형식의 내용을 가져옴
+      const title = titleRef.current.value;
       setContent(content);
-      console.log("success");
+      setTitle(title);
+      console.log(content);
+      console.log("upload success");
       uploadPost(title, content);
-      //   alert("등록에 성공했습니다");
-      //   navigate("/");
-      // } else {
-      //   console.log("error");
-      //   alert("등록 실패");
+    } else {
+      console.log("content 에러");
     }
   };
+
+  console.log(content);
 
   return (
     <div>
       <PostTitle
         type="text"
         placeholder="제목을 입력하세요"
-        onChange={saveTitle}
+        defaultValue={title}
+        ref={titleRef}
       />
       <Editor
         ref={editorRef}
-        initialValue=" "
+        initialValue={content}
         initialEditType="wysiwyg"
         placeholder="내용을 입력해주세요."
         previewStyle="tab"
@@ -98,7 +150,6 @@ export default function TostEditor({ setContent, lastId }) {
         language="ko-KR"
         handleGetContent={handleGetContent}
       ></Editor>
-
       <ButtonBox>
         <button
           onClick={() => {
@@ -119,7 +170,7 @@ export default function TostEditor({ setContent, lastId }) {
         </button>
         <button
           onClick={() => {
-            console.log({ title });
+            console.log(titleRef.current.value);
           }}
         >
           제목확인
