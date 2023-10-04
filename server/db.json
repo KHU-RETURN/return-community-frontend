@@ -169,9 +169,8 @@
       "isMyPost": true
     },
     {
-      "id": 13,
-      "title": "웅 내가 했는데 ",
-      "content": "ㅋㅋㅋ",
+      "title": "하하",
+      "content": "안녕\\~?\n\n# ㅋㅋㅋ\n\n> 오 이건 처음 써본다\n> 수정도 잘 되는군",
       "likeCount": 0,
       "commentCount": 0,
       "user": {
@@ -179,36 +178,34 @@
         "profileImgURL": "",
         "name": "민수민"
       },
-      "createdDate": "2023/09/13",
-      "isMyPost": true
+      "createdDate": "2023/10/2",
+      "isMyPost": true,
+      "id": 12
+    }
+  ],
+  "group": [
+    {
+      "id": 1,
+      "name": "자바스터디",
+      "member": ["민수민", "황혁수", "이가원"],
+      "explain": "일주일에 자바 문제 세개씩 푸는 스터디"
     },
     {
-      "id": 14,
-      "title": "히히",
-      "content": "심심하당구리",
-      "likeCount": 0,
-      "commentCount": 0,
-      "user": {
-        "userId": 2020103722,
-        "profileImgURL": "",
-        "name": "민수민"
-      },
-      "createdDate": "2023/09/13",
-      "isMyPost": true
+      "id": 2,
+      "name": "토익",
+      "member": ["민수민", "강동균", "오세영", "장승환"],
+      "explain": "졸업을 위한 토익"
     },
     {
-      "id": 15,
-      "title": "이건 내가 한거",
-      "content": "여기는 라이브러리 가져온거 ㅋ",
-      "likeCount": 0,
-      "commentCount": 0,
-      "user": {
-        "userId": 2020103722,
-        "profileImgURL": "",
-        "name": "민수민"
-      },
-      "createdDate": "2023/09/13",
-      "isMyPost": true
+      "id": 3,
+      "name": "리액트",
+      "member": ["민수민"],
+      "explain": "프론트 공부 모집 중"
+    },
+    {
+      "name": "인공지능",
+      "member": ["황혁수"],
+      "explain": "인지과 스터디"
     }
   ]
 }
