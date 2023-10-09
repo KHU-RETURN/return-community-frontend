@@ -37,9 +37,12 @@ const SignUp = () => {
     }
   };
 
-  const [isEmailAvailable, setIsEmailAvailable] = useState(null);
-  const [isPhoneNumAvailable, setIsPhoneNumAvailable] = useState(null);
-  const [isNicknameAvailable, setIsNicknameAvailable] = useState(null);
+  const [available, setAvailable] = useState({
+    email: null,
+    phoneNum: null,
+    nickname: null,
+  });
+
   const [profileImg, setProfileImg] = useState(""); // profileImg : 서버로 보내는 사용자 지정 이미지
   const [previewImg, setPreviewImg] = useState(default_profile);
   const imgRef = useRef();
@@ -81,14 +84,18 @@ const SignUp = () => {
     setProfileImg(""); // 서버로 보내는 사진은 null
   };
 
+  const areAllTrue = () => {
+    return (
+      available.email &&
+      available.phoneNum &&
+      available.nickname &&
+      initialInfo.studentId.length === 10
+    );
+  };
+
   //회원가입 버튼 눌렀을 때 동작
   const handleSignUp = async () => {
-    if (
-      isEmailAvailable &&
-      isPhoneNumAvailable &&
-      isNicknameAvailable &&
-      initialInfo.studentId.length === 10
-    ) {
+    if (areAllTrue()) {
       setIsSignUpAvailable(true);
       reqSignUp(initialInfo, profileImg, navigate);
     } else {
@@ -108,18 +115,16 @@ const SignUp = () => {
             onChange={handleChangeState}
             placeholder="KHU Email"
           />
-          <DupBtn
-            onClick={() => isDuplicatedEmail(initialInfo.email, setIsEmailAvailable, emailRef)}
-          >
+          <DupBtn onClick={() => isDuplicatedEmail(initialInfo.email, setAvailable, emailRef)}>
             중복 확인
           </DupBtn>
         </DivLine>
 
         <CheckMsg
-          isVisible={isEmailAvailable !== null}
-          isAvailable={isEmailAvailable}
+          isVisible={available.email !== null}
+          isAvailable={available.email}
         >
-          {isEmailAvailable
+          {available.email
             ? "사용 가능한 이메일입니다."
             : "이미 사용 중이거나 경희대 웹메일 양식이 아닙니다."}
         </CheckMsg>
@@ -135,19 +140,17 @@ const SignUp = () => {
             placeholder="Phone Number"
           />
           <DupBtn
-            onClick={() =>
-              isDuplicatedPhoneNum(initialInfo.phoneNumber, setIsPhoneNumAvailable, phoneNumRef)
-            }
+            onClick={() => isDuplicatedPhoneNum(initialInfo.phoneNumber, setAvailable, phoneNumRef)}
           >
             중복 확인
           </DupBtn>
         </DivLine>
 
         <CheckMsg
-          isVisible={isPhoneNumAvailable !== null}
-          isAvailable={isPhoneNumAvailable}
+          isVisible={available.phoneNum !== null}
+          isAvailable={available.phoneNum}
         >
-          {isPhoneNumAvailable
+          {available.phoneNum
             ? "사용 가능한 번호입니다."
             : "이미 가입 되었거나 휴대폰 번호 양식이 아닙니다."}
         </CheckMsg>
@@ -159,23 +162,21 @@ const SignUp = () => {
             name="nickname"
             value={initialInfo.nickname}
             onChange={handleChangeState}
-            maxLength={8}
+            maxLength={10}
             placeholder="Nickname"
           />
           <DupBtn
-            onClick={() =>
-              isDuplicatedNickname(initialInfo.nickname, setIsNicknameAvailable, nicknameRef)
-            }
+            onClick={() => isDuplicatedNickname(initialInfo.nickname, setAvailable, nicknameRef)}
           >
             중복 확인
           </DupBtn>
         </DivLine>
 
         <CheckMsg
-          isVisible={isNicknameAvailable !== null}
-          isAvailable={isNicknameAvailable}
+          isVisible={available.nickname !== null}
+          isAvailable={available.nickname}
         >
-          {isNicknameAvailable ? "사용 가능한 닉네임입니다." : "이미 사용 중인 닉네임입니다."}
+          {available.nickname ? "사용 가능한 닉네임입니다." : "이미 사용 중인 닉네임입니다."}
         </CheckMsg>
 
         <DivLine>

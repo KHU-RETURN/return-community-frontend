@@ -52,7 +52,7 @@ export const getProfileInfo = (token, setUserInfo) => {
       if (profileImg === null) {
         profileImg = default_profile;
       } else {
-        profileImg = `${API_URL}` + `${response.data.profileImgURL}`;
+        profileImg = `${API_URL}${response.data.profileImgURL}`;
       }
       setUserInfo({
         profileImg: profileImg,
@@ -89,7 +89,7 @@ export const logOut = (token, navigate) => {
 };
 
 /* SignUp page axios */
-export const isDuplicatedEmail = (email, setIsEmailAvailable, emailRef) => {
+export const isDuplicatedEmail = (email, setAvailable, emailRef) => {
   let config = {
     method: "get",
     url: API_URL + `/validate-email/${email}`,
@@ -98,15 +98,15 @@ export const isDuplicatedEmail = (email, setIsEmailAvailable, emailRef) => {
   axios
     .request(config)
     .then(() => {
-      setIsEmailAvailable(true);
+      setAvailable((prevState) => ({ ...prevState, email: true }));
     })
     .catch((error) => {
       emailRef.current.focus();
-      setIsEmailAvailable(false);
+      setAvailable((prevState) => ({ ...prevState, email: false }));
     });
 };
 
-export const isDuplicatedNickname = (nickname, setIsNicknameAvailable, nicknameRef) => {
+export const isDuplicatedNickname = (nickname, setAvailable, nicknameRef) => {
   let config = {
     method: "get",
     url: API_URL + `/validate-nickname/${nickname}`,
@@ -115,15 +115,15 @@ export const isDuplicatedNickname = (nickname, setIsNicknameAvailable, nicknameR
   axios
     .request(config)
     .then(() => {
-      setIsNicknameAvailable(true);
+      setAvailable((prevState) => ({ ...prevState, nickname: true }));
     })
     .catch(() => {
       nicknameRef.current.focus();
-      setIsNicknameAvailable(false);
+      setAvailable((prevState) => ({ ...prevState, nickname: false }));
     });
 };
 
-export const isDuplicatedPhoneNum = (phoneNum, setIsPhoneNumAvailable, phoneNumRef) => {
+export const isDuplicatedPhoneNum = (phoneNum, setAvailable, phoneNumRef) => {
   const phoneNumWithoutHyphen = phoneNum.replace(/-/g, "");
   let config = {
     method: "get",
@@ -133,11 +133,11 @@ export const isDuplicatedPhoneNum = (phoneNum, setIsPhoneNumAvailable, phoneNumR
   axios
     .request(config)
     .then(() => {
-      setIsPhoneNumAvailable(true);
+      setAvailable((prevState) => ({ ...prevState, phoneNum: true }));
     })
     .catch(() => {
       phoneNumRef.current.focus();
-      setIsPhoneNumAvailable(false);
+      setAvailable((prevState) => ({ ...prevState, phoneNum: false }));
     });
 };
 
@@ -153,13 +153,85 @@ export const reqSignUp = (initialInfo, profileImg, navigate) => {
   let config = {
     method: "post",
     url: API_URL + "/sign-up",
-    data: userData,
+    data: formData,
   };
 
   axios
     .request(config)
     .then((response) => {
       navigate("/profile");
+      console.log(response.data);
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
+
+/* UpdateProfile page axios */
+export const validateNickname = async (nickname, token, setDupMsg, nicknameRef) => {
+  let config = {
+    method: "get",
+    url: API_URL + `/validate-nickname/${nickname}`,
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+
+  axios
+    .request(config)
+    .then(() => {
+      console.log("사용 가능한 닉네임입니다.");
+      return true;
+    })
+    .catch(() => {
+      console.log("이미 존재하는 닉네임입니다.");
+      setDupMsg("이미 존재하는 닉네임입니다.");
+      nicknameRef.current.focus();
+      return false;
+    });
+};
+
+export const validatePhoneNum = async (phoneNum, token, setDupMsg, phoneNumRef) => {
+  let config = {
+    method: "get",
+    url: API_URL + `/validate-phone-number/${phoneNum}`,
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+
+  axios
+    .request(config)
+    .then(() => {
+      console.log("사용 가능한 번호입니다.");
+      return true;
+    })
+    .catch(() => {
+      console.log("이미 가입한 번호이거나 양식이 잘못되었습니다");
+      setDupMsg("이미 가입한 번호이거나 양식이 잘못되었습니다");
+      phoneNumRef.current.focus();
+      return false;
+    });
+};
+
+export const update = (userData, profileImg, navigate, token) => {
+  const formData = new FormData();
+  formData.append("updateRequest", JSON.stringify(userData));
+  formData.append("profileImg", profileImg);
+
+  let config = {
+    method: "put",
+    url: API_URL + "/profile",
+    data: formData,
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+
+  axios
+    .request(config)
+    .then((response) => {
+      navigate(-1);
       console.log(response.data);
     })
     .catch((error) => {

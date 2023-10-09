@@ -1,48 +1,48 @@
-import axios from "axios";
-import { useEffect, useState, useRef } from "react";
+import { useState, useRef } from "react";
 import { useCookies } from "react-cookie";
 import styled from "styled-components";
 import { useLocation, useNavigate } from "react-router-dom";
 import default_profile from "../assets/return_logo.png";
+import { update, validateNickname, validatePhoneNum } from "../utils/axios";
 
-const Profile = () => {
+const UpdateProfile = () => {
   const imgRef = useRef();
   const nicknameRef = useRef();
   const phoneNumRef = useRef();
   const stuIdRef = useRef();
+
   const [cookies] = useCookies();
   const location = useLocation();
   const navigate = useNavigate();
   const [beforeState, setBeforeState] = useState({
-    profile: location.state.profileImg,
-    email: location.state.email,
+    studentId: location.state.stuId,
+    name: location.state.name,
     nickname: location.state.nickname,
-    phoneNum: location.state.phoneNum,
-    stuId: location.state.stuId,
+    phoneNumber: location.state.phoneNum,
+    email: location.state.email,
   });
-  const name = location.state.name;
+
   const [afterState, setAfterState] = useState({
     ...beforeState,
   });
 
   const token = cookies["jwt-token"];
-  const headers = {
-    Authorization: `Bearer ${token}`,
-  };
-
   const [dupMsg, setDupMsg] = useState("");
-
-  const [previewImg, setPreviewImg] = useState(`${beforeState.profile}`);
+  const [previewImg, setPreviewImg] = useState(location.state.profileImg);
   const [profileImg, setProfileImg] = useState("");
-
   const [isChangeProfile, setIsChangeProfile] = useState(false);
 
   const handleState = (e) => {
-    if (e.target.name === "stuId") {
+    if (e.target.name === "studentId") {
       const value = e.target.value;
+      if (/[^0-9]/.test(value)) {
+        //숫자만 입력 가능
+        return;
+      }
+
       setAfterState((prevAfterState) => ({
         ...prevAfterState,
-        stuId: value.slice(0, 10),
+        studentId: value.slice(0, 10),
       }));
     } else {
       setAfterState({
@@ -74,70 +74,32 @@ const Profile = () => {
   };
 
   const handleBack = () => {
-    // 뒤로가기 기능 수행
     navigate(-1);
   };
 
   const handleUpdate = async () => {
-    let nicknameAvail = true;
     let phoneNumAvail = true;
     let stuIdAvail = true;
+    let nicknameAvail = true;
 
     if (beforeState.nickname !== afterState.nickname) {
-      try {
-        const res = await axios.get(
-          process.env.REACT_APP_API + `/validate-nickname/${afterState.nickname}`
-        );
-        console.log("사용 가능한 닉네임입니다.");
-      } catch (error) {
-        console.log("이미 존재하는 닉네임입니다.");
-        setDupMsg("이미 존재하는 닉네임입니다.");
-        nicknameRef.current.focus();
-        nicknameAvail = false;
-      }
+      nicknameAvail = validateNickname(afterState.nickname, token, setDupMsg, nicknameRef);
     }
-    if (beforeState.phoneNum !== afterState.phoneNum) {
-      try {
-        const res = await axios.get(
-          process.env.REACT_APP_API + `/validate-phone-number/${afterState.phoneNum}`
-        );
-        console.log("사용가능한 번호입니다.");
-      } catch (error) {
-        console.log("이미 가입한 번호이거나 양식이 잘못되었습니다.");
-        setDupMsg("이미 가입한 번호이거나 양식이 잘못되었습니다.");
-        phoneNumRef.current.focus();
-        phoneNumAvail = false;
-      }
+    if (beforeState.phoneNumber !== afterState.phoneNumber) {
+      phoneNumAvail = validatePhoneNum(afterState.phoneNumber, token, setDupMsg, phoneNumRef);
     }
-    if (afterState.stuId.length !== 10) {
-      console.log("학번을 다시 확인해주세요");
+    if (afterState.studentId.length !== 10) {
       setDupMsg("학번을 다시 확인해주세요");
       stuIdRef.current.focus();
       stuIdAvail = false;
     }
 
     if (nicknameAvail && phoneNumAvail && stuIdAvail) {
-      // 회원 정보 수정 api 연동
-      const formData = new FormData();
-
       const userData = {
-        studentId: `${afterState.stuId}`,
-        name: `${name}`,
-        nickname: `${afterState.nickname}`,
-        phoneNumber: `${afterState.phoneNum}`,
-        email: `${afterState.email}`,
+        ...afterState,
         isProfileImgChanged: isChangeProfile,
       };
-      formData.append("updateRequest", JSON.stringify(userData));
-      formData.append("profileImg", profileImg);
-
-      try {
-        const res = await axios.put(process.env.REACT_APP_API + "/profile", formData, { headers });
-        navigate(-1); //이전 페이지 이동
-        console.log(res.data);
-      } catch (error) {
-        console.log(error);
-      }
+      update(userData, profileImg, navigate, token);
     }
   };
 
@@ -172,7 +134,7 @@ const Profile = () => {
           ref={nicknameRef}
           name="nickname"
           type="text"
-          maxLength={8}
+          maxLength={10}
           value={afterState.nickname}
           onChange={handleState}
         />
@@ -180,19 +142,19 @@ const Profile = () => {
       <div>
         <input
           ref={phoneNumRef}
-          name="phoneNum"
+          name="phoneNumber"
           type="text"
-          value={afterState.phoneNum}
-          maxLength={13}
+          value={afterState.phoneNumber}
+          maxLength={11}
           onChange={handleState}
         />
       </div>
       <div>
         <input
           ref={stuIdRef}
-          name="stuId"
+          name="studentId"
           type="text"
-          value={afterState.stuId}
+          value={afterState.studentId}
           maxLength={10}
           onChange={handleState}
         />
@@ -206,7 +168,7 @@ const Profile = () => {
   );
 };
 
-export default Profile;
+export default UpdateProfile;
 
 const Container = styled.div`
   display: flex;
