@@ -7,6 +7,9 @@ import default_profile from "../assets/return_logo.png";
 
 const Profile = () => {
   const imgRef = useRef();
+  const nicknameRef = useRef();
+  const phoneNumRef = useRef();
+  const stuIdRef = useRef();
   const [cookies] = useCookies();
   const location = useLocation();
   const navigate = useNavigate();
@@ -67,6 +70,7 @@ const Profile = () => {
   const deleteProfile = () => {
     setPreviewImg(default_profile);
     setProfileImg("");
+    setIsChangeProfile(true);
   };
 
   const handleBack = () => {
@@ -88,6 +92,7 @@ const Profile = () => {
       } catch (error) {
         console.log("이미 존재하는 닉네임입니다.");
         setDupMsg("이미 존재하는 닉네임입니다.");
+        nicknameRef.current.focus();
         nicknameAvail = false;
       }
     }
@@ -100,18 +105,19 @@ const Profile = () => {
       } catch (error) {
         console.log("이미 가입한 번호이거나 양식이 잘못되었습니다.");
         setDupMsg("이미 가입한 번호이거나 양식이 잘못되었습니다.");
+        phoneNumRef.current.focus();
         phoneNumAvail = false;
       }
     }
     if (afterState.stuId.length !== 10) {
       console.log("학번을 다시 확인해주세요");
       setDupMsg("학번을 다시 확인해주세요");
+      stuIdRef.current.focus();
       stuIdAvail = false;
     }
 
     if (nicknameAvail && phoneNumAvail && stuIdAvail) {
       // 회원 정보 수정 api 연동
-      console.log("회원가입 가능합니다");
       const formData = new FormData();
 
       const userData = {
@@ -136,12 +142,14 @@ const Profile = () => {
   };
 
   return (
-    <div>
+    <Container>
       <div>
         <ProfileImgView
           src={previewImg}
           alt="profile preview"
         />
+      </div>
+      <div>
         <label htmlFor="profileBtn">프로필 사진 변경</label>
         <input
           style={{ display: "none" }}
@@ -153,11 +161,15 @@ const Profile = () => {
         />
         <label onClick={deleteProfile}>프로필 사진 삭제</label>
       </div>
+
+      <br />
+
       <div>
         <div>{beforeState.email}</div>
       </div>
       <div>
         <input
+          ref={nicknameRef}
           name="nickname"
           type="text"
           maxLength={8}
@@ -167,6 +179,7 @@ const Profile = () => {
       </div>
       <div>
         <input
+          ref={phoneNumRef}
           name="phoneNum"
           type="text"
           value={afterState.phoneNum}
@@ -176,6 +189,7 @@ const Profile = () => {
       </div>
       <div>
         <input
+          ref={stuIdRef}
           name="stuId"
           type="text"
           value={afterState.stuId}
@@ -188,15 +202,27 @@ const Profile = () => {
         <button onClick={handleUpdate}>변경</button>
       </div>
       {dupMsg}
-    </div>
+    </Container>
   );
 };
 
 export default Profile;
+
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  padding: 20px;
+  width: 100vw;
+  height: 100vh;
+`;
 
 const ProfileImgView = styled.img`
   width: 330px;
   height: 330px;
   border-radius: 50%;
   overflow: hidden;
+
+  box-shadow: 0px 6px 12px -6px #666;
 `;

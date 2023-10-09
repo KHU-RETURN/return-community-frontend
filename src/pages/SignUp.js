@@ -1,20 +1,41 @@
-import axios from "axios";
-import React, { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { useState, useRef } from "react";
 import default_profile from "../assets/return_logo.png";
+import {
+  isDuplicatedEmail,
+  isDuplicatedNickname,
+  isDuplicatedPhoneNum,
+  reqSignUp,
+} from "../utils/axios";
 
 const SignUp = () => {
   const location = useLocation();
-  const fullname = location.state.fullname;
-  const googleSub = location.state.googleSub;
-  const khumail = location.state.khumail;
 
-  const [email, setEmail] = useState(`${khumail}`);
-  const [phoneNum, setPhoneNum] = useState("");
-  const [nickname, setNickname] = useState("");
-  const [stuId, setStuId] = useState("");
+  const [initialInfo, setInitialInfo] = useState({
+    googleSub: location.state.googleSub,
+    phoneNumber: "",
+    email: location.state.khumail,
+    name: location.state.fullname,
+    nickname: "",
+    studentId: "",
+  });
+
+  const handleChangeState = (e) => {
+    if (e.target.name === "phoneNumber") {
+      const initialPhoneNum = e.target.value;
+      const formattedPhoneNum = formatPhoneNum(initialPhoneNum);
+      setInitialInfo({
+        ...initialInfo,
+        [e.target.name]: formattedPhoneNum,
+      });
+    } else {
+      setInitialInfo({
+        ...initialInfo,
+        [e.target.name]: e.target.value,
+      });
+    }
+  };
 
   const [isEmailAvailable, setIsEmailAvailable] = useState(null);
   const [isPhoneNumAvailable, setIsPhoneNumAvailable] = useState(null);
@@ -32,32 +53,6 @@ const SignUp = () => {
   const [isSignUpAvailable, setIsSignUpAvailable] = useState(null);
   const navigate = useNavigate();
 
-  const handleEmailChange = (e) => {
-    setEmail(e.target.value);
-  };
-
-  // 이메일 중복 확인 버튼을 눌렀을 때 동작
-  const isDuplicatedEmail = () => {
-    axios
-      .get(process.env.REACT_APP_API + `/validate-email/${email}`)
-      .then(() => {
-        console.log("사용 가능한 메일입니다");
-        setIsEmailAvailable(true);
-      })
-      .catch(() => {
-        // 서버측에서 ***khu.ac.kr 형식이 아니거나, 이미 등록된 메일인 경우 400 코드 반환
-        emailRef.current.focus();
-        setIsEmailAvailable(false);
-      });
-  };
-
-  // 전화번호 input 태그에 입력 이벤트가 발생했을 때 동작
-  const handlePhoneNumChange = (e) => {
-    const inputPhoneNum = e.target.value;
-    const formattedPhoneNum = formatPhoneNum(inputPhoneNum);
-    setPhoneNum(formattedPhoneNum);
-  };
-
   //휴대전화 input에 자동으로 하이푼이 들어가게끔 동작
   const formatPhoneNum = (num) => {
     const cleaned = num
@@ -67,47 +62,11 @@ const SignUp = () => {
     return cleaned;
   };
 
-  // 전화번호 중복 확인 버튼을 눌렀을 때 동작
-  const isDuplicatedPhoneNum = () => {
-    const phoneNumWithoutHyphen = phoneNum.replace(/-/g, "");
-    axios
-      .get(process.env.REACT_APP_API + `/validate-phone-number/${phoneNumWithoutHyphen}`)
-      .then(() => {
-        setIsPhoneNumAvailable(true);
-      })
-      .catch(() => {
-        phoneNumRef.current.focus();
-        setIsPhoneNumAvailable(false);
-      });
-  };
-
-  const handleStuIdChange = (e) => {
-    setStuId(e.target.value);
-  };
-
-  const handleNicknameChange = (e) => {
-    setNickname(e.target.value);
-  };
-
-  // 닉네임 중복 확인 버튼을 눌렀을 때 동작
-  const isDuplicatedNickname = () => {
-    axios
-      .get(process.env.REACT_APP_API + `/validate-nickname/${nickname}`)
-      .then(() => {
-        setIsNicknameAvailable(true);
-      })
-      .catch(() => {
-        nicknameRef.current.focus();
-        setIsNicknameAvailable(false);
-      });
-  };
-
   // 프로필 이미지 추가 버튼을 눌렀을 때 동작
   const handleProfileChange = () => {
     const imgFile = imgRef.current.files[0];
     if (imgFile) {
       setProfileImg(imgFile);
-
       const reader = new FileReader();
       reader.readAsDataURL(imgFile);
       reader.onloadend = () => {
@@ -124,30 +83,14 @@ const SignUp = () => {
 
   //회원가입 버튼 눌렀을 때 동작
   const handleSignUp = async () => {
-    if (isEmailAvailable && isPhoneNumAvailable && isNicknameAvailable && stuId.length === 10) {
+    if (
+      isEmailAvailable &&
+      isPhoneNumAvailable &&
+      isNicknameAvailable &&
+      initialInfo.studentId.length === 10
+    ) {
       setIsSignUpAvailable(true);
-      const phoneNumWithoutHyphen = phoneNum.replace(/-/g, "");
-      const formData = new FormData();
-
-      const userData = {
-        googleSub: `${googleSub}`,
-        phoneNumber: `${phoneNumWithoutHyphen}`,
-        email: `${email}`,
-        name: `${fullname}`,
-        nickname: `${nickname}`,
-        studentId: `${stuId}`,
-      };
-
-      formData.append("signUpRequest", JSON.stringify(userData));
-      formData.append("profileImg", profileImg);
-
-      try {
-        const res = await axios.post(process.env.REACT_APP_API + "/sign-up", formData);
-        navigate("/profile");
-        console.log(res.data);
-      } catch (error) {
-        console.error("Error making POST request:", error);
-      }
+      reqSignUp(initialInfo, profileImg, navigate);
     } else {
       setIsSignUpAvailable(false);
     }
@@ -160,11 +103,16 @@ const SignUp = () => {
           <InputForm
             ref={emailRef}
             type="email"
-            value={email}
-            onChange={handleEmailChange}
+            name="email"
+            value={initialInfo.email}
+            onChange={handleChangeState}
             placeholder="KHU Email"
           />
-          <DupBtn onClick={isDuplicatedEmail}>중복 확인</DupBtn>
+          <DupBtn
+            onClick={() => isDuplicatedEmail(initialInfo.email, setIsEmailAvailable, emailRef)}
+          >
+            중복 확인
+          </DupBtn>
         </DivLine>
 
         <CheckMsg
@@ -180,12 +128,19 @@ const SignUp = () => {
           <InputForm
             ref={phoneNumRef}
             type="text"
-            value={phoneNum}
-            onChange={handlePhoneNumChange}
+            name="phoneNumber"
+            value={initialInfo.phoneNumber}
+            onChange={handleChangeState}
             maxLength={13}
             placeholder="Phone Number"
           />
-          <DupBtn onClick={isDuplicatedPhoneNum}>중복 확인</DupBtn>
+          <DupBtn
+            onClick={() =>
+              isDuplicatedPhoneNum(initialInfo.phoneNumber, setIsPhoneNumAvailable, phoneNumRef)
+            }
+          >
+            중복 확인
+          </DupBtn>
         </DivLine>
 
         <CheckMsg
@@ -201,12 +156,19 @@ const SignUp = () => {
           <InputForm
             ref={nicknameRef}
             type="text"
-            value={nickname}
-            onChange={handleNicknameChange}
+            name="nickname"
+            value={initialInfo.nickname}
+            onChange={handleChangeState}
             maxLength={8}
             placeholder="Nickname"
           />
-          <DupBtn onClick={isDuplicatedNickname}>중복 확인</DupBtn>
+          <DupBtn
+            onClick={() =>
+              isDuplicatedNickname(initialInfo.nickname, setIsNicknameAvailable, nicknameRef)
+            }
+          >
+            중복 확인
+          </DupBtn>
         </DivLine>
 
         <CheckMsg
@@ -219,8 +181,9 @@ const SignUp = () => {
         <DivLine>
           <InputForm
             type="text"
-            value={stuId}
-            onChange={handleStuIdChange}
+            name="studentId"
+            value={initialInfo.studentId}
+            onChange={handleChangeState}
             maxLength={10}
             placeholder="Student ID"
           />
